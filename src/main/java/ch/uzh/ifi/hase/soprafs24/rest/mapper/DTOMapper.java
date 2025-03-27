@@ -36,4 +36,15 @@ public interface DTOMapper {
   @Mapping(source = "creation_date", target ="creation_date")
   @Mapping(source = "status", target = "status")
   UserGetDTO convertEntityToUserGetDTO(User user);
+
+  @Mapping(source = "id", target = "id")
+  @Mapping(source = "fileName", target = "fileName")
+  @Mapping(source = "planet", target = "planet")  //check
+  @Mapping(source = "dataPoints", target = "dataPoints")  
+  PhotometricCurveGetDTO convertEntityToPhotometricCurveGetDTO(PhotometricCurve photometricCurve);
+
+  @Mapping(source = "id", target = "id")
+  @Mapping(source = "time", target = "time")
+  @Mapping(source = "brightness", target = "brightness")
+  DataPointGetDTO convertEntityToDataPointGetDTO(DataPoint dataPoint);
 }
