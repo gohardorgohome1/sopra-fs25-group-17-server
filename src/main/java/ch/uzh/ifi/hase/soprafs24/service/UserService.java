@@ -84,12 +84,7 @@ public class UserService {
     if (updatedUser.getUsername() != null && !updatedUser.getUsername().trim().isEmpty()) {
       user.setUsername(updatedUser.getUsername());
     }
-    if (updatedUser.getName() != null) {
-      user.setName(updatedUser.getName());
-    }
-    if (updatedUser.getBirthday() != null) {
-      user.setBirthday(updatedUser.getBirthday());
-    }
+
     userRepository.save(user); // Persist changes
     return user;
   }
