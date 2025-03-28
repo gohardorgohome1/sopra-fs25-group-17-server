@@ -6,8 +6,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 @Entity
-public class DataPoint {
+public class DataPoint implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     // We need to add an id to each datapoint so we can preprocess the data
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
