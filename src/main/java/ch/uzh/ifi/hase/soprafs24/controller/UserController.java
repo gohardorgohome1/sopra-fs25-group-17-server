@@ -83,20 +83,7 @@ public class UserController {
   @PutMapping("/users/{id}")
   @ResponseBody
   public ResponseEntity<UserGetDTO> updateUser(@PathVariable Long id, @RequestBody UserPostDTO updatedUser) {
-      // 1. Handle birthday conversion from String (DD.MM.YYYY) to LocalDate
-      if (updatedUser.getBirthday() != null) {
-          //String birthdayString = updatedUser.getBirthday();
-          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-
-          try {
-              LocalDate birthday = LocalDate.parse(updatedUser.getBirthday(), formatter);
-              updatedUser.setBirthday(birthday.toString());  // Set the LocalDate in the DTO
-          } catch (DateTimeParseException e) {
-              throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid date format. Expected yyyy-MM-dd");
-          }
-      }
-
-      // 2. Convert UserPostDTO to User entity --> birthday becomes LocalDate in User.java
+            // 2. Convert UserPostDTO to User entity --> birthday becomes LocalDate in User.java
       User user = convertToUser(updatedUser);
 
       // 3. Call the service layer to update the user --> UserService.java operates with birthday as a LocalDate
@@ -113,14 +100,6 @@ public class UserController {
   private User convertToUser(UserPostDTO dto) {
       User user = new User();
       user.setUsername(dto.getUsername());
-      user.setName(dto.getName());
-
-      if (dto.getBirthday() != null) {
-          // Birthday is already a LocalDate in UserPostDTO
-          DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-          LocalDate birthday = LocalDate.parse(dto.getBirthday(), formatter);
-          user.setBirthday(birthday);
-      }
 
       return user;
   }
@@ -128,13 +107,6 @@ public class UserController {
   private UserGetDTO convertToUserGetDTO(User user) {
       UserGetDTO userGetDTO = new UserGetDTO();
       userGetDTO.setUsername(user.getUsername());
-      userGetDTO.setName(user.getName());
-
-      if (user.getBirthday() != null) {
-          DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
-          String formattedBirthday = user.getBirthday().format(outputFormatter);
-          userGetDTO.setBirthday(formattedBirthday);  // Set the birthday as a String (DD.MM.YYYY)
-      }
 
       return userGetDTO;
   }
