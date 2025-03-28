@@ -1,8 +1,11 @@
 package ch.uzh.ifi.hase.soprafs24.rest.mapper;
 
+import ch.uzh.ifi.hase.soprafs24.entity.Exoplanet;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.ExoplanetGetDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.ExoplanetPostDTO;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
@@ -31,4 +34,17 @@ public interface DTOMapper {
   @Mapping(source = "creation_date", target ="creation_date")
   @Mapping(source = "status", target = "status")
   UserGetDTO convertEntityToUserGetDTO(User user);
+
+
+  @Mapping(source = "planetName", target = "planetName")
+  @Mapping(source = "nameHostStar", target = "nameHostStar")
+  @Mapping(source = "photometricCurveId", target = "photometricCurve.id") // Assign photometric curve by ID
+  Exoplanet convertExoplanetPostDTOtoEntity(ExoplanetPostDTO exoplanetPostDTO);
+
+  @Mapping(source = "id", target = "id")
+  @Mapping(source = "planetName", target = "planetName")
+  @Mapping(source = "hostStarName", target = "hostStarName")
+  @Mapping(source = "photometricCurve.id", target = "photometricCurveId") // Include photometric curve reference
+  ExoplanetGetDTO convertEntityToExoplanetGetDTO(Exoplanet exoplanet);
+
 }
