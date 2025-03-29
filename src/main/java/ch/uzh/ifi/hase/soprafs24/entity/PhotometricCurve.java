@@ -6,31 +6,29 @@ import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
-@Entity
+@Document(collection = "photometric_curves") //MongoDB collection
 public class PhotometricCurve implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     private String filename;
 
-    @ManyToOne
-    @JoinColumn(name = "planet_id", nullable = false)
+    @DBRef  // Reference to another collection (optional)
     private Exoplanet planet;
 
-    @OneToMany(mappedBy = "curve", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<DataPoint> dataPoints = new ArrayList<>();
+    private List<DataPoint> dataPoints = new ArrayList<>(); // Embedded list of DataPoints
+    private Map<String, String> metadata = new HashMap<>();
 
     //void constructor, required by JPA
     public PhotometricCurve() {
     }
 
     public PhotometricCurve(Long id, String fileName, Exoplanet planet, List<DataPoint> dataPoints) {
-        this.id = id;
         this.fileName = fileName;
         this.planet = planet;
         this.dataPoints = dataPoints;
@@ -38,11 +36,11 @@ public class PhotometricCurve implements Serializable {
 
     //getters and setters
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
