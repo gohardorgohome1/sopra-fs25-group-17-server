@@ -63,10 +63,12 @@ public class ExoplanetController {
     }
 
     /**
-     * Create a new Exoplanet
-     * @param exoplanetPostDTO Exoplanet data from the request body
+     * Create a new Exoplanet IS NOT NEEDED HERE!
+     *  @param exoplanetPostDTO Exoplanet data from the request body
      * @return The created Exoplanet in DTO format
      */
+     /*
+      * 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
@@ -80,6 +82,7 @@ public class ExoplanetController {
         // Convert the created Exoplanet back to the DTO
         return DTOMapper.INSTANCE.convertEntityToExoplanetGetDTO(createdExoplanet);
     }
+      */
 
     /**
      * Delete an Exoplanet by ID
