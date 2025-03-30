@@ -99,17 +99,19 @@ public class PhotometricCurveService {
                 }
             }
         }
-        
-        // Calculate fractional depth from data points
-        float fractionalDepth = calculateFractionalDepth(dataPoints);
-
-        Exoplanet exoplanet = calculateExoplanetData(hostStar, planetName, fractionalDepth);
-        exoplanet = exoplanetRepository.save(exoplanet);
 
         // Create and save the photometric curve
         PhotometricCurve curve = new PhotometricCurve();
         curve.setFileName(file.getOriginalFilename());
         curve.setDataPoints(dataPoints);
+        // Calculate fractional depth from data points
+        float fractionalDepth = calculateFractionalDepth(dataPoints);
+
+        Exoplanet exoplanet = calculateExoplanetData(hostStar, planetName, fractionalDepth);
+        exoplanet.setPhotometricCurve(curve);
+        exoplanet = exoplanetRepository.save(exoplanet);
+
+
         curve.setPlanet(exoplanet);
 
         // Save to MongoDB
