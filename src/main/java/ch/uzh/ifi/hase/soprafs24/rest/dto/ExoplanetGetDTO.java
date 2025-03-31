@@ -1,17 +1,17 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
 public class ExoplanetGetDTO {
-    private Long id;
+    private String id;
     private String planetName;
     private String hostStarName;
-    private Long photometricCurveId; // Reference to the PhotometricCurve
+    private String photometricCurveId; // Reference to the PhotometricCurve
 
     // Getters and Setters
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -31,11 +31,11 @@ public class ExoplanetGetDTO {
         this.hostStarName = hostStarName;
     }
 
-    public Long getPhotometricCurveId() {
+    public String getPhotometricCurveId() {
         return photometricCurveId;
     }
 
-    public void setPhotometricCurveId(Long photometricCurveId) {
+    public void setPhotometricCurveId(String photometricCurveId) {
         this.photometricCurveId = photometricCurveId;
     }
 }

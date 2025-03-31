@@ -2,17 +2,8 @@ package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
 public class DataPointGetDTO {
 
-    private Long id;
-    private Float time; 
+    private Float time;
     private Float brightness;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }  
 
     public Float getTime() {
         return time;
@@ -30,4 +21,3 @@ public class DataPointGetDTO {
         this.brightness = brightness;
     }
 }
-

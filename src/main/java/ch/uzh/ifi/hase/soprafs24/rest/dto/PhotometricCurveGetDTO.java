@@ -1,19 +1,21 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
-import ch.uzh.ifi.hase.soprafs24.entity.Exoplanet; 
-import ch.uzh.ifi.hase.soprafs24.rest.dto.DataPointGetDTO;  
 
+import java.util.List;
+import java.util.Map;
 
 public class PhotometricCurveGetDTO {
-    private Long id;
-    private String fileName;
-    private Exoplanet planet;
-    private List<DataPointGetDTO> dataPoints;
 
-    public Long getId() {
+    private String id;
+    private String fileName;
+    private String exoplanetId;
+    private List<DataPointGetDTO> dataPoints;
+    private Map<String, String> metadata;
+
+    public String getId() {
         return id;
     }
-    
-    public void setId(Long id) {
+
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -25,12 +27,12 @@ public class PhotometricCurveGetDTO {
         this.fileName = fileName;
     }
 
-    public Exoplanet getPlanet() {
-        return planet;
+    public String getExoplanetId() {
+        return exoplanetId;
     }
 
-    public void setPlanet(Exoplanet planet) {
-        this.planet = planet;
+    public void setExoplanetId(String exoplanetId) {
+        this.exoplanetId = exoplanetId;
     }
 
     public List<DataPointGetDTO> getDataPoints() {
@@ -39,5 +41,13 @@ public class PhotometricCurveGetDTO {
 
     public void setDataPoints(List<DataPointGetDTO> dataPoints) {
         this.dataPoints = dataPoints;
+    }
+
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
     }
 }

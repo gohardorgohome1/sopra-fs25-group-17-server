@@ -1,73 +1,41 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
-import javax.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.io.Serializable;
 import java.util.List;
 
-
-@Entity
-@Table(name = "EXOPLANET")
-public class Exoplanet implements Serializable{
-    
-    private static final long serialVersionUID = 1L;
+@Document(collection = "exoplanets")
+public class Exoplanet implements Serializable {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    private String id;
 
-    @Column(nullable = false)
     private String planetName;
+    private String ownerId;  // Reference to User
 
-    @ManyToOne
-    @JoinColumn(name = "owner_id", nullable = false)
-    private User owner;
-
-    @OneToOne(mappedBy = "planet", fetch = FetchType.LAZY)
-    private PhotometricCurve photometricCurve;
-
-    @ElementCollection
-    @CollectionTable(name = "EXOPLANET_COMMENTS", joinColumns = @JoinColumn(name = "exoplanet_id"))
-    @Column(name = "comment")
-    private List<String> comments;
-
-    @Column(nullable = false)
     private String hostStarName;
-
-    @Column(nullable = false)
     private float fractionalDepth;
-
-    @Column(nullable = false)
     private float density;
-
-    @Column(nullable = false)
     private float orbitalPeriod;
-
-    @Column(nullable = false)
     private float radius;
-
-    @Column(nullable = false)
     private float surfaceGravity;
-
-    @Column(nullable = false)
     private float theoreticalTemperature;
-
-    @Column(nullable = false)
     private float mass;
-
-    @Column(nullable = false)
     private float escapeVelocity;
-
-    @Column(nullable = false)
     private float earthSimilarityIndex;
 
+    private List<String> comments;
 
+    private String photometricCurveId;
 
     // Getters and Setters
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -79,28 +47,12 @@ public class Exoplanet implements Serializable{
         this.planetName = planetName;
     }
 
-    public User getOwner() {
-        return owner;
+    public String getOwnerId() {
+        return ownerId;
     }
 
-    public void setOwner(User owner) {
-        this.owner = owner;
-    }
-
-    public PhotometricCurve getPhotometricCurve() {
-        return photometricCurve;
-    }
-
-    public void setPhotometricCurve(PhotometricCurve photometricCurve) {
-        this.photometricCurve = photometricCurve;
-    }
-
-    public List<String> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<String> comments) {
-        this.comments = comments;
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 
     public String getHostStarName() {
@@ -183,5 +135,19 @@ public class Exoplanet implements Serializable{
         this.earthSimilarityIndex = earthSimilarityIndex;
     }
 
+    public List<String> getComments() {
+        return comments;
+    }
 
+    public void setComments(List<String> comments) {
+        this.comments = comments;
+    }
+
+    public String getPhotometricCurveId() {
+        return photometricCurveId;
+    }
+
+    public void setPhotometricCurveId(String photometricCurveId) {
+        this.photometricCurveId = photometricCurveId;
+    }
 }

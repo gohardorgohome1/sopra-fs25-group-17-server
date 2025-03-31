@@ -1,24 +1,14 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import java.io.Serializable;
 
-@Entity
 public class DataPoint implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    // We need to add an id to each datapoint so we can preprocess the data
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private String id;
     private Float time;
     private Float brightness;
     private Float brightnessError;
 
-    public DataPoint() {
-    }
+    public DataPoint() {}
 
     public DataPoint(Float time, Float brightness, Float brightnessError) {
         this.time = time;

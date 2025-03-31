@@ -3,7 +3,7 @@ package ch.uzh.ifi.hase.soprafs24.rest.dto;
 public class ExoplanetPostDTO {
     private String planetName;
     private String hostStarName;
-    private Long photometricCurveId; // Reference to the PhotometricCurve
+    private String photometricCurveId; // Reference to the PhotometricCurve (MongoDB -> String)
 
     // Getters and Setters
     public String getPlanetName() {
@@ -22,11 +22,11 @@ public class ExoplanetPostDTO {
         this.hostStarName = hostStarName;
     }
 
-    public Long getPhotometricCurveId() {
+    public String getPhotometricCurveId() {
         return photometricCurveId;
     }
 
-    public void setPhotometricCurveId(Long photometricCurveId) {
+    public void setPhotometricCurveId(String photometricCurveId) {
         this.photometricCurveId = photometricCurveId;
     }
 }

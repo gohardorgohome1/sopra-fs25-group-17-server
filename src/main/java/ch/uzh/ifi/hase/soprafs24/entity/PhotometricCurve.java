@@ -1,40 +1,27 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
-//import exoplanet
 
-import javax.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.io.Serializable;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-@Document(collection = "photometric_curves") //MongoDB collection
+@Document(collection = "photometric_curves")
 public class PhotometricCurve implements Serializable {
-
-    private static final long serialVersionUID = 1L;
 
     @Id
     private String id;
 
-    private String filename;
+    private String fileName;
+    private String exoplanetId;
 
-    @DBRef  // Reference to another collection (optional)
-    private Exoplanet planet;
-
-    private List<DataPoint> dataPoints = new ArrayList<>(); // Embedded list of DataPoints
+    private List<DataPoint> dataPoints = new ArrayList<>();
     private Map<String, String> metadata = new HashMap<>();
 
-    //void constructor, required by JPA
-    public PhotometricCurve() {
-    }
-
-    public PhotometricCurve(Long id, String fileName, Exoplanet planet, List<DataPoint> dataPoints) {
-        this.fileName = fileName;
-        this.planet = planet;
-        this.dataPoints = dataPoints;
-    }
-
-    //getters and setters
+    public PhotometricCurve() {}
 
     public String getId() {
         return id;
@@ -44,7 +31,7 @@ public class PhotometricCurve implements Serializable {
         this.id = id;
     }
 
-     public String getFileName() {
+    public String getFileName() {
         return fileName;
     }
 
@@ -52,12 +39,12 @@ public class PhotometricCurve implements Serializable {
         this.fileName = fileName;
     }
 
-    public Exoplanet getPlanet() {
-        return planet;
+    public String getExoplanetId() {
+        return exoplanetId;
     }
 
-    public void setPlanet(Exoplanet planet) {
-        this.planet = planet;
+    public void setExoplanetId(String exoplanetId) {
+        this.exoplanetId = exoplanetId;
     }
 
     public List<DataPoint> getDataPoints() {
@@ -66,5 +53,13 @@ public class PhotometricCurve implements Serializable {
 
     public void setDataPoints(List<DataPoint> dataPoints) {
         this.dataPoints = dataPoints;
+    }
+
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
     }
 }
