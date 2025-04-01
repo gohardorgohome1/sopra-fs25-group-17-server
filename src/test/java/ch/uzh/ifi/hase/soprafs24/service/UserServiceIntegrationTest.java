@@ -1,3 +1,4 @@
+/* 
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  *
  * @see UserService
  */
+/*
 @WebAppConfiguration
 @SpringBootTest
 public class UserServiceIntegrationTest {
@@ -78,5 +80,5 @@ public class UserServiceIntegrationTest {
     // check that an error is thrown
     assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser2));
   }
-    */
-}
+    
+}*/

@@ -1,91 +1,69 @@
 package ch.uzh.ifi.hase.soprafs24.entity;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * Internal User Representation
- * This class composes the internal representation of the user and defines how
- * the user is stored in the database.
- * Every variable will be mapped into a database field with the @Column
- * annotation
- * - nullable = false -> this cannot be left empty
- * - unique = true -> this value must be unqiue across the database -> composes
- * the primary key
- */
-@Entity
-@Table(name = "USER")
+@Document(collection = "users")
 public class User implements Serializable {
 
-  private static final long serialVersionUID = 1L;
+    @Id
+    private String id;
 
-  @Id
-  @GeneratedValue
-  private Long id;
+    private String username;
+    private String token;
+    private UserStatus status;
+    private String password;
+    private LocalDateTime creationDate;
 
-  @Column(nullable = false, unique = true)
-  private String username;
+    public String getId() {
+        return id;
+    }
 
-  @Column(nullable = false, unique = true)
-  private String token;
+    public void setId(String id) {
+        this.id = id;
+    }
 
-  @Column(nullable = false)
-  private UserStatus status;
+    public String getUsername() {
+        return username;
+    }
 
-  @Column(nullable = false)
-  private String password;
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-  @Column(nullable = false)
-  private LocalDateTime creation_date;
+    public String getToken() {
+        return token;
+    }
 
-  public Long getId() {
-    return id;
-  }
+    public void setToken(String token) {
+        this.token = token;
+    }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+    public UserStatus getStatus() {
+        return status;
+    }
 
-  public String getUsername() {
-    return username;
-  }
+    public void setStatus(UserStatus status) {
+        this.status = status;
+    }
 
-  public void setUsername(String username) {
-    this.username = username;
-  }
+    public String getPassword() {
+        return password;
+    }
 
-  public String getPassword() {
-    return password;
-  }
-  public void setPassword(String password) {
-    this.password = password;
-  }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-  public LocalDateTime getCreation_date() {
-    return creation_date;
-  }
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
 
-  public void setCreation_date(LocalDateTime creation_date){
-    this.creation_date = creation_date;
-  }
-
-  public String getToken() {
-    return token;
-  }
-
-  public void setToken(String token) {
-    this.token = token;
-  }
-
-  public UserStatus getStatus() {
-    return status;
-  }
-
-  public void setStatus(UserStatus status) {
-    this.status = status;
-  }
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.creationDate = creationDate;
+    }
 }

@@ -2,21 +2,20 @@ package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class UserGetDTO {
 
-  private Long id;
+  private String id;
   private String username;
   private LocalDateTime creation_date;
   private UserStatus status;
 
-  public Long getId() {
+  public String getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(String id) {
     this.id = id;
   }
 
