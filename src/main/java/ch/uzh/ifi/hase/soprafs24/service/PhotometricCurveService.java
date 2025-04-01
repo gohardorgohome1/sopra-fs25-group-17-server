@@ -141,6 +141,23 @@ public class PhotometricCurveService {
         return exoplanet;
     }
 
+    /*public Map<String, Float> fetchExoplanetDataFromAPI(String planetName) {
+        Map<String, Float> data = new HashMap<>();
+        try {
+            String queryUrl = String.format(TAP_API_URL + "?query=" + QUERY, planetName);
+            URI uri = URI.create(queryUrl);
+            HttpRequest request = HttpRequest.newBuilder().uri(uri).header("Content-Type", "application/x-www-form-urlencoded").build();
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                data = parseVOTableData(response.body());
+            } else {
+                System.out.println("Error: Unable to fetch data (HTTP status " + response.statusCode() + ")");
+            }
+        } catch (Exception e) {
+            System.out.println("Error fetching data from TAP API: " + e.getMessage());
+        }s
+        return data;
+    }*/
     public Map<String, Float> fetchExoplanetDataFromAPI(String planetName) {
         Map<String, Float> data = new HashMap<>();
         try {
