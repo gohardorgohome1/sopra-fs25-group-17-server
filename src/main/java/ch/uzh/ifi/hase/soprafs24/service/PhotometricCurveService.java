@@ -141,23 +141,50 @@ public class PhotometricCurveService {
         return exoplanet;
     }
 
-    /*public Map<String, Float> fetchExoplanetDataFromAPI(String planetName) {
+    public Map<String, Float> fetchExoplanetDataFromAPI(String planetName) {
         Map<String, Float> data = new HashMap<>();
+    
         try {
+            // Build the query URL with the planet name
             String queryUrl = String.format(TAP_API_URL + "?query=" + QUERY, planetName);
             URI uri = URI.create(queryUrl);
-            HttpRequest request = HttpRequest.newBuilder().uri(uri).header("Content-Type", "application/x-www-form-urlencoded").build();
+    
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(uri)
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .build();
+    
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+    
+            System.out.println("[NASA TAP] Response status code: " + response.statusCode());
+    
             if (response.statusCode() == 200) {
                 data = parseVOTableData(response.body());
+    
+                if (data.isEmpty()) {
+                    System.out.println("[NASA TAP] Response was successful, but no valid data was found for planet: " + planetName);
+                }
             } else {
-                System.out.println("Error: Unable to fetch data (HTTP status " + response.statusCode() + ")");
+                System.out.println("[NASA TAP] Failed to retrieve data. HTTP status code: " + response.statusCode());
             }
+    
+        } catch (IOException e) {
+            System.out.println("[NASA TAP] I/O error while fetching data: " + e.getMessage());
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            System.out.println("[NASA TAP] Request was interrupted: " + e.getMessage());
         } catch (Exception e) {
-            System.out.println("Error fetching data from TAP API: " + e.getMessage());
-        }s
+            System.out.println("[NASA TAP] Unexpected error occurred: " + e.getMessage());
+        }
+    
+        if (data.isEmpty()) {
+            System.out.println("[NASA TAP] No data available for planet '" + planetName + "'. Returning empty result.");
+        }
+    
         return data;
-    }*/
+    }
+    
+    /* 
     public Map<String, Float> fetchExoplanetDataFromAPI(String planetName) {
         Map<String, Float> data = new HashMap<>();
     
@@ -169,7 +196,7 @@ public class PhotometricCurveService {
         }
     
         return data;
-    }
+    } */
 
     private Map<String, Float> parseVOTableData(String xmlResponse) {
         Map<String, Float> data = new HashMap<>();
