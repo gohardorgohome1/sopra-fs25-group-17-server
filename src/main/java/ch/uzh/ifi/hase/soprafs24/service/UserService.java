@@ -46,7 +46,8 @@ public class UserService {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password.");
     }
     user.setStatus(UserStatus.ONLINE);
-    return userRepository.save(user);
+    userRepository.save(user);
+    return user;
   }
 
   public void logoutUser(String id) {
