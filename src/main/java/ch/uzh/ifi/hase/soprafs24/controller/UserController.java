@@ -43,10 +43,11 @@ public class UserController {
   }
 
   @PostMapping("/login")
-  public UserGetDTO login(@RequestBody UserPostDTO loginRequest) {
-    User user = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
-    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
-  }
+  @ResponseBody
+  public User login(@RequestBody UserPostDTO loginRequest) {
+        // Call the login method from the UserService
+        return userService.login(loginRequest.getUsername(), loginRequest.getPassword());
+    }
 
   @PutMapping("/users/{id}/logout")
   public ResponseEntity<Void> logoutUser(@PathVariable String id) {
