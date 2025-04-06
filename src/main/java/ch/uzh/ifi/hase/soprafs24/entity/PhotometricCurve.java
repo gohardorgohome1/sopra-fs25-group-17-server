@@ -17,6 +17,7 @@ public class PhotometricCurve implements Serializable {
 
     private String fileName;
     private String exoplanetId;
+    private String ownerId;
 
     private List<DataPoint> dataPoints = new ArrayList<>();
     private Map<String, String> metadata = new HashMap<>();
@@ -29,6 +30,14 @@ public class PhotometricCurve implements Serializable {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 
     public String getFileName() {

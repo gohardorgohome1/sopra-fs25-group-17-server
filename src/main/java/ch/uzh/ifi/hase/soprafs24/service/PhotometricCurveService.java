@@ -50,7 +50,7 @@ public class PhotometricCurveService {
         this.exoplanetRepository = exoplanetRepository;
     }
 
-    public PhotometricCurve processAndSavePhotometricCurve(MultipartFile file, String hostStar, String planetName) throws IOException {
+    public PhotometricCurve processAndSavePhotometricCurve(MultipartFile file, String hostStar, String planetName, String ownerId) throws IOException {
         List<DataPoint> dataPoints = new ArrayList<>();
         Map<String, String> metadata = new HashMap<>();
 
@@ -86,6 +86,7 @@ public class PhotometricCurveService {
         float fractionalDepth = calculateFractionalDepth(dataPoints);
 
         Exoplanet exoplanet = calculateExoplanetData(hostStar, planetName, fractionalDepth);
+        exoplanet.setOwnerId(ownerId);
         exoplanet = exoplanetRepository.save(exoplanet);
 
         PhotometricCurve curve = new PhotometricCurve();
@@ -93,6 +94,7 @@ public class PhotometricCurveService {
         curve.setDataPoints(dataPoints);
         curve.setMetadata(metadata);
         curve.setExoplanetId(exoplanet.getId());
+        curve.setOwnerId(ownerId);
 
         return photometricCurveRepository.save(curve);
     }
