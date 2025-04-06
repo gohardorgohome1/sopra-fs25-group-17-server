@@ -149,10 +149,9 @@ public class PhotometricCurveService {
 
         try {
             String adqlQuery = String.format("""
-                    SELECT pl_name, st_rad, st_mass, rowupdate
+                    SELECT pl_name, st_rad, pl_orbper, pl_masse, pl_eqt
                     FROM ps
-                    WHERE pl_name = '%s'
-                    ORDER BY rowupdate DESC
+                    WHERE pl_name = '%s' AND st_rad IS NOT NULL AND pl_orbper IS NOT NULL AND pl_masse IS NOT NULL AND pl_eqt IS NOT NULL
                     """, planetName);
 
             String requestBody = "query=" + URLEncoder.encode(adqlQuery, StandardCharsets.UTF_8) +
@@ -170,11 +169,10 @@ public class PhotometricCurveService {
 
             if (response.statusCode() == 200) {
                 System.out.println("[NASA TAP] Response body:\n" + response.body());
-                System.out.println("[NASA TAP] Response body:\n" + response.body());
                 data = parseVOTableData(response.body());
 
                 if (data.isEmpty()) {
-                    System.out.println("[NASA TAP] No valid st_rad/st_mass found.");
+                    System.out.println("[NASA TAP] Some data is empty.");
                 }
             } else {
                 System.out.println("[NASA TAP] Failed with HTTP code: " + response.statusCode());
@@ -186,97 +184,70 @@ public class PhotometricCurveService {
 
         return data;
     }
-    
-    /* 
-    public Map<String, Float> fetchExoplanetDataFromAPI(String planetName) {
-        Map<String, Float> data = new HashMap<>();
-    
-        if (planetName.equalsIgnoreCase("TrES-3b")) {
-            data.put("star_radius", 0.83f);                
-            data.put("orbitalPeriod", 1.306f);              
-            data.put("mass", 1.91f);                        
-            data.put("theoretical_temperature", 1620f);    
-        }
-    
-        return data;
-    } */
 
-    /* 
+    
     private Map<String, Float> parseVOTableData(String xmlResponse) {
         Map<String, Float> data = new HashMap<>();
         try {
+            System.out.println("[VOT Parse] Starting XML Parsing...");
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document document = builder.parse(new InputSource(new StringReader(xmlResponse)));
+    
             NodeList rows = document.getElementsByTagName("TR");
+            System.out.println("[VOT Parse] Number of TR rows: " + rows.getLength());
+    
             if (rows.getLength() > 0) {
                 NodeList cells = rows.item(0).getChildNodes();
+                System.out.println("[VOT Parse] Number of TD cells in first row: " + cells.getLength());
+    
                 for (int i = 0, j = 0; i < cells.getLength(); i++) {
                     Node cell = cells.item(i);
                     if (cell.getNodeName().equals("TD")) {
-                        String value = cell.getTextContent();
+                        String value = cell.getTextContent().trim();
+                        System.out.println("  [VOT Parse] TD #" + j + " raw value: '" + value + "'");
+    
                         try {
-                            switch (j++) {
-                                case 1 -> data.put("star_radius", Float.parseFloat(value));
-                                case 2 -> data.put("orbitalPeriod", Float.parseFloat(value));
-                                case 3 -> data.put("mass", Float.parseFloat(value));
-                                case 4 -> data.put("theoretical_temperature", Float.parseFloat(value));
+                            float parsedValue = Float.parseFloat(value);
+                            switch (j) {
+                                case 1 -> {
+                                    data.put("star_radius", parsedValue);
+                                    System.out.println("    -> star_radius = " + parsedValue);
+                                }
+                                case 2 -> {
+                                    data.put("orbitalPeriod", parsedValue);
+                                    System.out.println("    -> orbitalPeriod = " + parsedValue);
+                                }
+                                case 3 -> {
+                                    data.put("mass", parsedValue);
+                                    System.out.println("    -> mass = " + parsedValue);
+                                }
+                                case 4 -> {
+                                    data.put("theoretical_temperature", parsedValue);
+                                    System.out.println("    -> theoretical_temperature = " + parsedValue);
+                                }
+                                default -> System.out.println("    -> TD #" + j + " not used.");
                             }
-                        } catch (NumberFormatException ignored) {}
+                        } catch (NumberFormatException nfe) {
+                            System.out.println("    [WARN] Could not parse value to float: '" + value + "'");
+                        }
+    
+                        j++;
                     }
                 }
+            } else {
+                System.out.println("[VOT Parse] No data rows found in XML.");
             }
         } catch (Exception e) {
             System.out.println("Error parsing XML response: " + e.getMessage());
+            e.printStackTrace();
         }
-        return data;
-    } */
-
-    private Map<String, Float> parseVOTableData(String xmlResponse) {
-        Map<String, Float> data = new HashMap<>();
-        try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder = factory.newDocumentBuilder();
-            Document document = builder.parse(new InputSource(new StringReader(xmlResponse)));
-
-            NodeList rows = document.getElementsByTagName("TR");
-            for (int i = 0; i < rows.getLength(); i++) {
-                Node row = rows.item(i);
-                NodeList cells = row.getChildNodes();
-
-                String stRadStr = null;
-                String stMassStr = null;
-
-                int tdIndex = 0;
-                for (int j = 0; j < cells.getLength(); j++) {
-                    Node cell = cells.item(j);
-                    if (cell.getNodeName().equals("TD")) {
-                        String content = cell.getTextContent().trim();
-
-                        if (tdIndex == 1) stRadStr = content;
-                        else if (tdIndex == 2) stMassStr = content;
-
-                        tdIndex++;
-                    }
-                }
-
-                
-                if (stRadStr != null && stMassStr != null) {
-                    float stRad = Float.parseFloat(stRadStr);
-                    float stMass = Float.parseFloat(stMassStr);
-                    data.put("star_radius", stRad);
-                    data.put("mass", stMass);
-                    break; 
-                }
-            }
-
-        } catch (Exception e) {
-            System.out.println("[NASA TAP] Error parsing VOTable XML: " + e.getMessage());
-        }
-
+    
+        System.out.println("[VOT Parse] Final parsed values: " + data);
         return data;
     }
-
+    
+    
     private float magnitudeToFlux(float magnitude) {
         return (float) Math.pow(10, -0.4 * magnitude);
     }
