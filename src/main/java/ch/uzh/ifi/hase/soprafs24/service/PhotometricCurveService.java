@@ -156,7 +156,7 @@ public class PhotometricCurveService {
                     """, planetName);
 
             String requestBody = "query=" + URLEncoder.encode(adqlQuery, StandardCharsets.UTF_8) +
-                                 "&format=xml";
+                                 "&format=votable";
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(TAP_API_URL))
