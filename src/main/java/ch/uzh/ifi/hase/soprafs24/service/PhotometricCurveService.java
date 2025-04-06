@@ -240,6 +240,14 @@ public class PhotometricCurveService {
         }
     
         System.out.println("[VOT Parse] Final parsed values: " + data);
+        
+        if (!data.containsKey("star_radius") || !data.containsKey("orbitalPeriod") ||
+        !data.containsKey("mass") || !data.containsKey("theoretical_temperature")) {
+        throw new ResponseStatusException(
+            HttpStatus.UNPROCESSABLE_ENTITY,
+            "Not enough data was found for this exoplanet. Please try with another one."
+        );
+    }
         return data;
     }
     
