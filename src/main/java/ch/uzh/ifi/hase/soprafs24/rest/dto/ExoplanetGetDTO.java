@@ -14,6 +14,7 @@ public class ExoplanetGetDTO {
     private float mass;
     private float escapeVelocity;
     private float earthSimilarityIndex;
+    private String ownerId;
 
     // Getters and Setters
     public String getId() {
@@ -22,6 +23,14 @@ public class ExoplanetGetDTO {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(String ownerId) {
+        this.ownerId = ownerId;
     }
 
     public String getPlanetName() {

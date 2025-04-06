@@ -24,9 +24,10 @@ public class PhotometricCurveController {
     public ResponseEntity<PhotometricCurve> uploadPhotometricCurve(
             @RequestParam("file") MultipartFile file,
             @RequestParam("hostStar") String hostStar,
-            @RequestParam("exoplanet") String exoplanet) {
+            @RequestParam("exoplanet") String exoplanet,
+            @RequestParam("ownerId") String ownerId) {
         try {
-            PhotometricCurve curve = photometricCurveService.processAndSavePhotometricCurve(file, hostStar, exoplanet);
+            PhotometricCurve curve = photometricCurveService.processAndSavePhotometricCurve(file, hostStar, exoplanet, ownerId);
             return ResponseEntity.status(HttpStatus.CREATED).body(curve);
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error processing file: " + e.getMessage());
