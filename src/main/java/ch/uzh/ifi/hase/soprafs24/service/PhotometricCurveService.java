@@ -21,6 +21,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.xml.sax.InputSource;
+import java.net.URLEncoder;
+
 
 
 import static java.lang.Math.pow;
@@ -141,18 +143,30 @@ public class PhotometricCurveService {
         return exoplanet;
     }
 
-    /* 
+    
     public Map<String, Float> fetchExoplanetDataFromAPI(String planetName) {
         Map<String, Float> data = new HashMap<>();
     
         try {
-            // Build the query URL with the planet name
-            String queryUrl = String.format(TAP_API_URL + "?query=" + QUERY, planetName);
-            URI uri = URI.create(queryUrl);
+            String adqlQuery = String.format("""
+                    SELECT pl_name, st_rad, pl_orbper, pl_masse, pl_eqt
+                    FROM ps
+                    WHERE pl_name = '%s'
+                    AND st_rad IS NOT NULL
+                    AND pl_orbper IS NOT NULL
+                    AND pl_masse IS NOT NULL
+                    AND pl_eqt IS NOT NULL
+                    ORDER BY rowupdate DESC
+                    """, planetName);
+    
+            // Prepare POST body
+            String requestBody = "query=" + URLEncoder.encode(adqlQuery, StandardCharsets.UTF_8) +
+                                 "&format=xml";
     
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(uri)
+                    .uri(URI.create("https://exoplanetarchive.ipac.caltech.edu/TAP/sync"))
                     .header("Content-Type", "application/x-www-form-urlencoded")
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();
     
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -183,9 +197,10 @@ public class PhotometricCurveService {
         }
     
         return data;
-    } */
+    }
+     
     
-    
+    /* 
     public Map<String, Float> fetchExoplanetDataFromAPI(String planetName) {
         Map<String, Float> data = new HashMap<>();
     
@@ -197,7 +212,7 @@ public class PhotometricCurveService {
         }
     
         return data;
-    } 
+    } */
 
     private Map<String, Float> parseVOTableData(String xmlResponse) {
         Map<String, Float> data = new HashMap<>();
