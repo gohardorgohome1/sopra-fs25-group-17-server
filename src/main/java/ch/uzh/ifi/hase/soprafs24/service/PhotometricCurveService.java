@@ -141,6 +141,7 @@ public class PhotometricCurveService {
         return exoplanet;
     }
 
+    /* 
     public Map<String, Float> fetchExoplanetDataFromAPI(String planetName) {
         Map<String, Float> data = new HashMap<>();
     
@@ -182,9 +183,9 @@ public class PhotometricCurveService {
         }
     
         return data;
-    }
+    } */
     
-    /* 
+    
     public Map<String, Float> fetchExoplanetDataFromAPI(String planetName) {
         Map<String, Float> data = new HashMap<>();
     
@@ -196,7 +197,7 @@ public class PhotometricCurveService {
         }
     
         return data;
-    } */
+    } 
 
     private Map<String, Float> parseVOTableData(String xmlResponse) {
         Map<String, Float> data = new HashMap<>();
