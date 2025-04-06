@@ -36,10 +36,6 @@ public class PhotometricCurveService {
 
     private static final String TAP_API_URL = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync";
     private static final HttpClient client = HttpClient.newHttpClient();
-    private static final String QUERY = "SELECT pl_name, st_rad, pl_orbper, pl_masse, pl_eqt " +
-            "FROM ps " +
-            "WHERE pl_name = '%s' AND st_rad IS NOT NULL AND pl_orbper IS NOT NULL AND pl_masse IS NOT NULL AND pl_eqt IS NOT NULL";
-
     private static final float SOLAR_RADIUS_TO_EARTH = 109f;
     private static final float SURFACE_TEMP_EARTH = 288f;
 
