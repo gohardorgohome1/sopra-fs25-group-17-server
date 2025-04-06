@@ -34,11 +34,11 @@ public class PhotometricCurveService {
     private final PhotometricCurveRepository photometricCurveRepository;
     private final ExoplanetRepository exoplanetRepository;
 
-    private static final String TAP_API_URL = "https://exoplanetarchive.ipac.caltech.edu/TAP";
+    private static final String TAP_API_URL = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync";
+    private static final HttpClient client = HttpClient.newHttpClient();
     private static final String QUERY = "SELECT pl_name, st_rad, pl_orbper, pl_masse, pl_eqt " +
             "FROM ps " +
             "WHERE pl_name = '%s' AND st_rad IS NOT NULL AND pl_orbper IS NOT NULL AND pl_masse IS NOT NULL AND pl_eqt IS NOT NULL";
-    private static final HttpClient client = HttpClient.newHttpClient();
 
     private static final float SOLAR_RADIUS_TO_EARTH = 109f;
     private static final float SURFACE_TEMP_EARTH = 288f;
@@ -146,59 +146,45 @@ public class PhotometricCurveService {
     
     public Map<String, Float> fetchExoplanetDataFromAPI(String planetName) {
         Map<String, Float> data = new HashMap<>();
-    
+
         try {
             String adqlQuery = String.format("""
-                    SELECT pl_name, st_rad, pl_orbper, pl_masse, pl_eqt
+                    SELECT pl_name, st_rad, st_mass, rowupdate
                     FROM ps
                     WHERE pl_name = '%s'
-                    AND st_rad IS NOT NULL
-                    AND pl_orbper IS NOT NULL
-                    AND pl_masse IS NOT NULL
-                    AND pl_eqt IS NOT NULL
                     ORDER BY rowupdate DESC
                     """, planetName);
-    
-            // Prepare POST body
+
             String requestBody = "query=" + URLEncoder.encode(adqlQuery, StandardCharsets.UTF_8) +
                                  "&format=xml";
-    
+
             HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://exoplanetarchive.ipac.caltech.edu/TAP/sync"))
+                    .uri(URI.create(TAP_API_URL))
                     .header("Content-Type", "application/x-www-form-urlencoded")
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();
-    
+
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-    
+
             System.out.println("[NASA TAP] Response status code: " + response.statusCode());
-    
+
             if (response.statusCode() == 200) {
+                System.out.println("[NASA TAP] Response body:\n" + response.body());
                 data = parseVOTableData(response.body());
-    
+
                 if (data.isEmpty()) {
-                    System.out.println("[NASA TAP] Response was successful, but no valid data was found for planet: " + planetName);
+                    System.out.println("[NASA TAP] No valid st_rad/st_mass found.");
                 }
             } else {
-                System.out.println("[NASA TAP] Failed to retrieve data. HTTP status code: " + response.statusCode());
+                System.out.println("[NASA TAP] Failed with HTTP code: " + response.statusCode());
             }
-    
-        } catch (IOException e) {
-            System.out.println("[NASA TAP] I/O error while fetching data: " + e.getMessage());
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            System.out.println("[NASA TAP] Request was interrupted: " + e.getMessage());
-        } catch (Exception e) {
-            System.out.println("[NASA TAP] Unexpected error occurred: " + e.getMessage());
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
-    
-        if (data.isEmpty()) {
-            System.out.println("[NASA TAP] No data available for planet '" + planetName + "'. Returning empty result.");
-        }
-    
+
         return data;
     }
-     
     
     /* 
     public Map<String, Float> fetchExoplanetDataFromAPI(String planetName) {
@@ -214,6 +200,7 @@ public class PhotometricCurveService {
         return data;
     } */
 
+    /* 
     private Map<String, Float> parseVOTableData(String xmlResponse) {
         Map<String, Float> data = new HashMap<>();
         try {
@@ -241,6 +228,51 @@ public class PhotometricCurveService {
         } catch (Exception e) {
             System.out.println("Error parsing XML response: " + e.getMessage());
         }
+        return data;
+    } */
+
+    private Map<String, Float> parseVOTableData(String xmlResponse) {
+        Map<String, Float> data = new HashMap<>();
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document document = builder.parse(new InputSource(new StringReader(xmlResponse)));
+
+            NodeList rows = document.getElementsByTagName("TR");
+            for (int i = 0; i < rows.getLength(); i++) {
+                Node row = rows.item(i);
+                NodeList cells = row.getChildNodes();
+
+                String stRadStr = null;
+                String stMassStr = null;
+
+                int tdIndex = 0;
+                for (int j = 0; j < cells.getLength(); j++) {
+                    Node cell = cells.item(j);
+                    if (cell.getNodeName().equals("TD")) {
+                        String content = cell.getTextContent().trim();
+
+                        if (tdIndex == 1) stRadStr = content;
+                        else if (tdIndex == 2) stMassStr = content;
+
+                        tdIndex++;
+                    }
+                }
+
+                
+                if (stRadStr != null && stMassStr != null) {
+                    float stRad = Float.parseFloat(stRadStr);
+                    float stMass = Float.parseFloat(stMassStr);
+                    data.put("star_radius", stRad);
+                    data.put("mass", stMass);
+                    break; 
+                }
+            }
+
+        } catch (Exception e) {
+            System.out.println("[NASA TAP] Error parsing VOTable XML: " + e.getMessage());
+        }
+
         return data;
     }
 
