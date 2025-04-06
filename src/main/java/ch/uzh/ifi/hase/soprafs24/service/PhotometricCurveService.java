@@ -170,6 +170,7 @@ public class PhotometricCurveService {
 
             if (response.statusCode() == 200) {
                 System.out.println("[NASA TAP] Response body:\n" + response.body());
+                System.out.println("[NASA TAP] Response body:\n" + response.body());
                 data = parseVOTableData(response.body());
 
                 if (data.isEmpty()) {
