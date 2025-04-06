@@ -5,6 +5,15 @@ public class ExoplanetGetDTO {
     private String planetName;
     private String hostStarName;
     private String photometricCurveId; // Reference to the PhotometricCurve
+    private float fractionalDepth;
+    private float density;
+    private float orbitalPeriod;
+    private float radius;
+    private float surfaceGravity;
+    private float theoreticalTemperature;
+    private float mass;
+    private float escapeVelocity;
+    private float earthSimilarityIndex;
 
     // Getters and Setters
     public String getId() {
@@ -38,4 +47,76 @@ public class ExoplanetGetDTO {
     public void setPhotometricCurveId(String photometricCurveId) {
         this.photometricCurveId = photometricCurveId;
     }
+    public float getFractionalDepth() {
+        return fractionalDepth;
+    }
+
+    public void setFractionalDepth(float fractionalDepth) {
+        this.fractionalDepth = fractionalDepth;
+    }
+
+    public float getDensity() {
+        return density;
+    }
+
+    public void setDensity(float density) {
+        this.density = density;
+    }
+
+    public float getOrbitalPeriod() {
+        return orbitalPeriod;
+    }
+
+    public void setOrbitalPeriod(float orbitalPeriod) {
+        this.orbitalPeriod = orbitalPeriod;
+    }
+
+    public float getRadius() {
+        return radius;
+    }
+
+    public void setRadius(float radius) {
+        this.radius = radius;
+    }
+
+    public float getSurfaceGravity() {
+        return surfaceGravity;
+    }
+
+    public void setSurfaceGravity(float surfaceGravity) {
+        this.surfaceGravity = surfaceGravity;
+    }
+
+    public float getTheoreticalTemperature() {
+        return theoreticalTemperature;
+    }
+
+    public void setTheoreticalTemperature(float theoreticalTemperature) {
+        this.theoreticalTemperature = theoreticalTemperature;
+    }
+
+    public float getMass() {
+        return mass;
+    }
+
+    public void setMass(float mass) {
+        this.mass = mass;
+    }
+
+    public float getEscapeVelocity() {
+        return escapeVelocity;
+    }
+
+    public void setEscapeVelocity(float escapeVelocity) {
+        this.escapeVelocity = escapeVelocity;
+    }
+
+    public float getEarthSimilarityIndex() {
+        return earthSimilarityIndex;
+    }
+
+    public void setEarthSimilarityIndex(float earthSimilarityIndex) {
+        this.earthSimilarityIndex = earthSimilarityIndex;
+    }
+
 }
