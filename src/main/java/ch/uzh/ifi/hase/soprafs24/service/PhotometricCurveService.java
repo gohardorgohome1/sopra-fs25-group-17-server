@@ -21,6 +21,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 import org.xml.sax.InputSource;
+import java.net.URLEncoder;
+
 
 
 import static java.lang.Math.pow;
@@ -32,12 +34,8 @@ public class PhotometricCurveService {
     private final PhotometricCurveRepository photometricCurveRepository;
     private final ExoplanetRepository exoplanetRepository;
 
-    private static final String TAP_API_URL = "https://exoplanetarchive.ipac.caltech.edu/TAP";
-    private static final String QUERY = "SELECT pl_name, st_rad, pl_orbper, pl_masse, pl_eqt " +
-            "FROM ps " +
-            "WHERE pl_name = '%s' AND st_rad IS NOT NULL AND pl_orbper IS NOT NULL AND pl_masse IS NOT NULL AND pl_eqt IS NOT NULL";
+    private static final String TAP_API_URL = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync";
     private static final HttpClient client = HttpClient.newHttpClient();
-
     private static final float SOLAR_RADIUS_TO_EARTH = 109f;
     private static final float SURFACE_TEMP_EARTH = 288f;
 
@@ -141,54 +139,119 @@ public class PhotometricCurveService {
         return exoplanet;
     }
 
+    
     public Map<String, Float> fetchExoplanetDataFromAPI(String planetName) {
         Map<String, Float> data = new HashMap<>();
+
         try {
-            String queryUrl = String.format(TAP_API_URL + "?query=" + QUERY, planetName);
-            URI uri = URI.create(queryUrl);
-            HttpRequest request = HttpRequest.newBuilder().uri(uri).header("Content-Type", "application/x-www-form-urlencoded").build();
+            String adqlQuery = String.format("""
+                    SELECT pl_name, st_rad, pl_orbper, pl_masse, pl_eqt
+                    FROM ps
+                    WHERE pl_name = '%s' AND st_rad IS NOT NULL AND pl_orbper IS NOT NULL AND pl_masse IS NOT NULL AND pl_eqt IS NOT NULL
+                    """, planetName);
+
+            String requestBody = "query=" + URLEncoder.encode(adqlQuery, StandardCharsets.UTF_8) +
+                                 "&format=votable";
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(TAP_API_URL))
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                    .build();
+
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            System.out.println("[NASA TAP] Response status code: " + response.statusCode());
+
             if (response.statusCode() == 200) {
+                System.out.println("[NASA TAP] Response body:\n" + response.body());
                 data = parseVOTableData(response.body());
+
+                if (data.isEmpty()) {
+                    System.out.println("[NASA TAP] Some data is empty.");
+                }
             } else {
-                System.out.println("Error: Unable to fetch data (HTTP status " + response.statusCode() + ")");
+                System.out.println("[NASA TAP] Failed with HTTP code: " + response.statusCode());
             }
-        } catch (Exception e) {
-            System.out.println("Error fetching data from TAP API: " + e.getMessage());
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
         }
+
         return data;
     }
 
+    
     private Map<String, Float> parseVOTableData(String xmlResponse) {
         Map<String, Float> data = new HashMap<>();
         try {
+            System.out.println("[VOT Parse] Starting XML Parsing...");
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document document = builder.parse(new InputSource(new StringReader(xmlResponse)));
+    
             NodeList rows = document.getElementsByTagName("TR");
+            System.out.println("[VOT Parse] Number of TR rows: " + rows.getLength());
+    
             if (rows.getLength() > 0) {
                 NodeList cells = rows.item(0).getChildNodes();
+                System.out.println("[VOT Parse] Number of TD cells in first row: " + cells.getLength());
+    
                 for (int i = 0, j = 0; i < cells.getLength(); i++) {
                     Node cell = cells.item(i);
                     if (cell.getNodeName().equals("TD")) {
-                        String value = cell.getTextContent();
+                        String value = cell.getTextContent().trim();
+                        System.out.println("  [VOT Parse] TD #" + j + " raw value: '" + value + "'");
+    
                         try {
-                            switch (j++) {
-                                case 1 -> data.put("star_radius", Float.parseFloat(value));
-                                case 2 -> data.put("orbitalPeriod", Float.parseFloat(value));
-                                case 3 -> data.put("mass", Float.parseFloat(value));
-                                case 4 -> data.put("theoretical_temperature", Float.parseFloat(value));
+                            float parsedValue = Float.parseFloat(value);
+                            switch (j) {
+                                case 1 -> {
+                                    data.put("star_radius", parsedValue);
+                                    System.out.println("    -> star_radius = " + parsedValue);
+                                }
+                                case 2 -> {
+                                    data.put("orbitalPeriod", parsedValue);
+                                    System.out.println("    -> orbitalPeriod = " + parsedValue);
+                                }
+                                case 3 -> {
+                                    data.put("mass", parsedValue);
+                                    System.out.println("    -> mass = " + parsedValue);
+                                }
+                                case 4 -> {
+                                    data.put("theoretical_temperature", parsedValue);
+                                    System.out.println("    -> theoretical_temperature = " + parsedValue);
+                                }
+                                default -> System.out.println("    -> TD #" + j + " not used.");
                             }
-                        } catch (NumberFormatException ignored) {}
+                        } catch (NumberFormatException nfe) {
+                            System.out.println("    [WARN] Could not parse value to float: '" + value + "'");
+                        }
+    
+                        j++;
                     }
                 }
+            } else {
+                System.out.println("[VOT Parse] No data rows found in XML.");
             }
         } catch (Exception e) {
             System.out.println("Error parsing XML response: " + e.getMessage());
+            e.printStackTrace();
         }
+    
+        System.out.println("[VOT Parse] Final parsed values: " + data);
+        
+        if (!data.containsKey("star_radius") || !data.containsKey("orbitalPeriod") ||
+        !data.containsKey("mass") || !data.containsKey("theoretical_temperature")) {
+        throw new ResponseStatusException(
+            HttpStatus.UNPROCESSABLE_ENTITY,
+            "Not enough data was found for this exoplanet. Please try with another one."
+        );
+    }
         return data;
     }
-
+    
+    
     private float magnitudeToFlux(float magnitude) {
         return (float) Math.pow(10, -0.4 * magnitude);
     }
