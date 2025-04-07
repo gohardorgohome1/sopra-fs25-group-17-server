@@ -68,6 +68,7 @@ public class PhotometricCurve implements Serializable {
         return metadata;
     }
 
+    
     public void setMetadata(Map<String, String> metadata) {
         this.metadata = metadata;
     }
