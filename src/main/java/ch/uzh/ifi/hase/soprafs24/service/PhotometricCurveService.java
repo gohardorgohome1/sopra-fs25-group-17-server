@@ -87,16 +87,18 @@ public class PhotometricCurveService {
 
         Exoplanet exoplanet = calculateExoplanetData(hostStar, planetName, fractionalDepth);
         exoplanet.setOwnerId(ownerId);
-
-        PhotometricCurve curve = new PhotometricCurve();
-        exoplanet.setPhotometricCurveId(curve.getId());
         exoplanet = exoplanetRepository.save(exoplanet);
+        
+        PhotometricCurve curve = new PhotometricCurve();
+
         curve.setFileName(file.getOriginalFilename());
         curve.setDataPoints(dataPoints);
         curve.setMetadata(metadata);
         curve.setExoplanetId(exoplanet.getId());
         curve.setOwnerId(ownerId);
-
+        photometricCurveRepository.save(curve);
+        exoplanet.setPhotometricCurveId(curve.getId());
+        exoplanet = exoplanetRepository.save(exoplanet);
         return photometricCurveRepository.save(curve);
     }
 
