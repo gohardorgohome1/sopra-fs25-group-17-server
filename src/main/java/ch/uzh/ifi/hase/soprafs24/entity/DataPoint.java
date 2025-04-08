@@ -4,23 +4,23 @@ import java.io.Serializable;
 
 public class DataPoint implements Serializable {
 
-    private Float time;
+    private Double time;
     private Float brightness;
     private Float brightnessError;
 
     public DataPoint() {}
 
-    public DataPoint(Float time, Float brightness, Float brightnessError) {
+    public DataPoint(Double time, Float brightness, Float brightnessError) {
         this.time = time;
         this.brightness = brightness;
         this.brightnessError = brightnessError;
     }
 
-    public Float getTime() {
+    public Double getTime() {
         return time;
     }
 
-    public void setTime(Float time) {
+    public void setTime(Double time) {
         this.time = time;
     }
 

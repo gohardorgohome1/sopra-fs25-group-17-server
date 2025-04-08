@@ -113,7 +113,7 @@ public class PhotometricCurveService {
         try {
             String[] parts = line.trim().split("\\s+");
             if (parts.length >= 3) {
-                float jd = Float.parseFloat(parts[0]);
+                double jd = Double.parseDouble(parts[0]);
                 float mag = Float.parseFloat(parts[1]);
                 float err = Float.parseFloat(parts[2]);
                 return new DataPoint(jd, mag, err);
