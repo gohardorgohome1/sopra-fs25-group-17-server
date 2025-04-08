@@ -51,6 +51,7 @@ public interface DTOMapper {
 
   @Mapping(source = "time", target = "time")
   @Mapping(source = "brightness", target = "brightness")
+  @Mapping(source = "brightnessError", target = "brightnessError")
   DataPointGetDTO convertEntityToDataPointGetDTO(DataPoint dataPoint);
 
   List<DataPointGetDTO> convertDataPointList(List<DataPoint> dataPoints);

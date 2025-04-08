@@ -2,14 +2,15 @@ package ch.uzh.ifi.hase.soprafs24.rest.dto;
 
 public class DataPointGetDTO {
 
-    private Float time;
+    private Double time;
     private Float brightness;
+    private Float brightnessError;
 
-    public Float getTime() {
+    public Double getTime() {
         return time;
     }
 
-    public void setTime(Float time) {
+    public void setTime(Double time) {
         this.time = time;
     }
 
@@ -19,5 +20,13 @@ public class DataPointGetDTO {
 
     public void setBrightness(Float brightness) {
         this.brightness = brightness;
+    }
+
+    public Float getBrightnessError() {
+        return brightnessError;
+    }
+
+    public void setBrightnessError(Float brightnessError) {
+        this.brightnessError = brightnessError;
     }
 }
