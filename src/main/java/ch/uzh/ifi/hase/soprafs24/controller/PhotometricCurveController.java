@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.io.IOException;
 
@@ -15,9 +16,11 @@ import java.io.IOException;
 public class PhotometricCurveController {
 
     private final PhotometricCurveService photometricCurveService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public PhotometricCurveController(PhotometricCurveService photometricCurveService) {
+    public PhotometricCurveController(PhotometricCurveService photometricCurveService, SimpMessagingTemplate messagingTemplate) {
         this.photometricCurveService = photometricCurveService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     @PostMapping("/upload")
@@ -28,6 +31,8 @@ public class PhotometricCurveController {
             @RequestParam("ownerId") String ownerId) {
         try {
             PhotometricCurve curve = photometricCurveService.processAndSavePhotometricCurve(file, hostStar, exoplanet, ownerId);
+
+            messagingTemplate.convertAndSend("/topic/exoplanets", exoplanet);
             return ResponseEntity.status(HttpStatus.CREATED).body(curve);
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error processing file: " + e.getMessage());
