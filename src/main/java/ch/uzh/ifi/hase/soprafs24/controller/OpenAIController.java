@@ -12,7 +12,7 @@ import java.util.*;
 @RestController
 public class OpenAIController {
 
-    private static final String OPENAI_API_KEY = "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"; // Pon aquí tu clave secreta
+    private static final String OPENAI_API_KEY = "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"; 
     private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 
     @PostMapping("/openai/chat")
