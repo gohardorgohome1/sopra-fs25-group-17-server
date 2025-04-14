@@ -61,7 +61,7 @@ public class PhotometricCurveController {
 
             messagingTemplate.convertAndSend("/topic/exoplanets", notification);
             // Call the NotificationService to create notifications for all users
-            notificationService.createNotificationsForAllUsers(exoplanetEntity.getId(), user.getUsername(), exoplanetEntity.getPlanetName());
+            notificationService.createNotificationsForAllUsers(exoplanetEntity.getId(), user.getUsername(), exoplanetEntity.getPlanetName(), ownerId);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(curve);
         } catch (IOException e) {

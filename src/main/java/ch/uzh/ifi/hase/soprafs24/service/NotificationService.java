@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.NotificationRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,7 +20,8 @@ public class NotificationService {
     @Autowired
     private UserRepository userRepository;
 
-    public void createNotificationsForAllUsers(String exoplanetId, String uploaderUsername, String planetName) {
+    @Async
+    public void createNotificationsForAllUsers(String exoplanetId, String uploaderUsername, String planetName, String ownerId) {
         // Fetch all users to notify
         List<User> allUsers = userRepository.findAll();
 
@@ -30,7 +32,8 @@ public class NotificationService {
             n.setExoplanetId(exoplanetId);
             n.setUploaderUsername(uploaderUsername);
             n.setPlanetName(planetName);
-            n.setSeen(false); // New notifications are unseen
+            n.setSeen(u.getId().equals(ownerId)); // uploader gets "seen = true"
+            // n.setSeen(false); // New notifications are unseen
             notifications.add(n);
         }
 
@@ -50,5 +53,12 @@ public class NotificationService {
         return notifs;
     }
 
+    public void markNotificationsAsSeen(String userId){
+        List<Notification> notifs = notificationRepository.findByUserIdAndSeenFalse(userId);
+        for (Notification n : notifs) {
+            n.setSeen(true); // Mark as seen
+        }
+
+    }
 
 }

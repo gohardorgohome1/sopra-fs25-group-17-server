@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/notifications")
@@ -21,4 +22,11 @@ public class NotificationController {
         List<Notification> notifications = notificationService.getUnseenNotificationsForUser(userId);
         return ResponseEntity.ok(notifications);
     }
+
+    @PutMapping("/mark-seen")
+    public ResponseEntity<Void> markNotificationsAsSeen(@RequestBody Map<String, String> body) {
+        String userId = body.get("userId");
+        notificationService.markNotificationsAsSeen(userId);
+        return ResponseEntity.ok().build();
+}
 }
