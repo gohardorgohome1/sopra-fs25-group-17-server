@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 import ch.uzh.ifi.hase.soprafs24.entity.Exoplanet;
 import ch.uzh.ifi.hase.soprafs24.entity.PhotometricCurve;
 import ch.uzh.ifi.hase.soprafs24.service.PhotometricCurveService;
+import ch.uzh.ifi.hase.soprafs24.service.NotificationService;
 
 // import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +30,7 @@ public class PhotometricCurveController {
     private final SimpMessagingTemplate messagingTemplate;
     private final UserService userService;
     private ExoplanetRepository exoplanetRepository;
+    private NotificationService notificationService;
 
 
     public PhotometricCurveController(PhotometricCurveService photometricCurveService, SimpMessagingTemplate messagingTemplate, UserService userService, ExoplanetRepository exoplanetRepository) {
@@ -58,6 +60,9 @@ public class PhotometricCurveController {
             notification.put("exoplanet", exoplanetEntity);            
 
             messagingTemplate.convertAndSend("/topic/exoplanets", notification);
+            // Call the NotificationService to create notifications for all users
+            notificationService.createNotificationsForAllUsers(exoplanetEntity.getId(), user.getUsername(), exoplanetEntity.getPlanetName());
+
             return ResponseEntity.status(HttpStatus.CREATED).body(curve);
         } catch (IOException e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error processing file: " + e.getMessage());
