@@ -1,4 +1,4 @@
-package ch.uzh.ifi.hase.soprafs24.config;
+package ch.uzh.ifi.hase.soprafs24;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
