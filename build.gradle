@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.4.13'
+    id 'org.springframework.boot' version '3.2.3'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'java'
     id 'idea'
@@ -12,7 +12,7 @@ version '1.0.0'
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(17))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 
@@ -38,6 +38,11 @@ dependencies {
     
     implementation 'org.mapstruct:mapstruct:1.3.1.Final'
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+    implementation 'jakarta.servlet:jakarta.servlet-api:6.0.0'
+    
+    // Optional: if you're using Spring Boot and it manages your dependencies, use:
+    // providedCompile 'jakarta.servlet:jakarta.servlet-api:6.0.0
 
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.3.1.Final'
     testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.3.1.Final'
@@ -69,7 +74,7 @@ sonar {
 
 jacocoTestReport {
     reports {
-        xml.enabled true
+        xml.required.set(true)
     }
 }
 
