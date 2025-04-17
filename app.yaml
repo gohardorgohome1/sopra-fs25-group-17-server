@@ -5,6 +5,9 @@ runtime: java21
 env: flex
 instance_class: F2
 
+runtime_config:
+  jdk: openjdk
+
 network:
   session_affinity: true
 
