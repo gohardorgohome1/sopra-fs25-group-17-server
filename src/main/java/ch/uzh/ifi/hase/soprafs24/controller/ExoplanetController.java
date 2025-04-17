@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Exoplanet;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.CommentGetDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.CommentPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.ExoplanetGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.ExoplanetService;
@@ -89,5 +91,16 @@ public class ExoplanetController {
     private boolean isValidSortBy(String sortBy) {
         return sortBy.equals("mass") || sortBy.equals("radius") || sortBy.equals("temperature") ||
                sortBy.equals("density") || sortBy.equals("esi");
+    }
+
+    @PostMapping("/{id}/comments")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addCommentToExoplanet(@PathVariable String id, @RequestBody CommentPostDTO commentPostDTO) {
+        exoplanetService.addComment(id, commentPostDTO);
+    }
+
+    @GetMapping("/{id}/comments")
+    public List<CommentGetDTO> getCommentsForExoplanet(@PathVariable String id) {
+        return exoplanetService.getComments(id);
     }
 }

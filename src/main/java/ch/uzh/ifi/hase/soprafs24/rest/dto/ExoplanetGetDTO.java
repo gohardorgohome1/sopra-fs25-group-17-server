@@ -1,4 +1,6 @@
 package ch.uzh.ifi.hase.soprafs24.rest.dto;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.CommentGetDTO;
+import java.util.List;
 
 public class ExoplanetGetDTO {
     private String id;
@@ -15,6 +17,8 @@ public class ExoplanetGetDTO {
     private float escapeVelocity;
     private float earthSimilarityIndex;
     private String ownerId;
+
+    private List<CommentGetDTO> comments;
 
     // Getters and Setters
     public String getId() {
@@ -126,6 +130,14 @@ public class ExoplanetGetDTO {
 
     public void setEarthSimilarityIndex(float earthSimilarityIndex) {
         this.earthSimilarityIndex = earthSimilarityIndex;
+    }
+
+    public List<CommentGetDTO> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<CommentGetDTO> comments) {
+        this.comments = comments;
     }
 
 }

@@ -36,6 +36,7 @@ public interface DTOMapper {
   @Mapping(source = "planetName", target = "planetName")
   @Mapping(source = "hostStarName", target = "hostStarName")
   @Mapping(source = "photometricCurveId", target = "photometricCurveId")
+  @Mapping(source = "comments", target = "comments")
   ExoplanetGetDTO convertEntityToExoplanetGetDTO(Exoplanet exoplanet);
 
   // --- PhotometricCurve Mapping ---
@@ -55,4 +56,11 @@ public interface DTOMapper {
   DataPointGetDTO convertEntityToDataPointGetDTO(DataPoint dataPoint);
 
   List<DataPointGetDTO> convertDataPointList(List<DataPoint> dataPoints);
+
+  @Mapping(source = "userId", target = "userId")
+  @Mapping(source = "message", target = "message")
+  @Mapping(source = "createdAt", target = "createdAt")
+  CommentGetDTO convertCommentToCommentDTO(Exoplanet.Comment comment);
+
+  List<CommentGetDTO> convertCommentList(List<Exoplanet.Comment> comments);
 }
