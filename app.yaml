@@ -3,3 +3,13 @@
 
 runtime: java17
 instance_class: F2
+
+
+handlers:
+  # Route all websocket-related paths to the backend
+  - url: /ws/.*
+    script: auto
+
+  # Optional: catch-all rule to pass everything to Spring
+  - url: /.*
+    script: auto
