@@ -16,6 +16,16 @@ java {
     }
 }
 
+toolchainManagement {
+    jvm {
+        javaRepositories {
+            jdk {
+                vendor = JvmVendorSpec.ADOPTIUM
+            }
+        }
+    }
+}
+
 configurations {
     developmentOnly
     runtimeClasspath {
