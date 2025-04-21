@@ -1,18 +1,26 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Exoplanet;
+import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.repository.ExoplanetRepository;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.CommentGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.CommentPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.ExoplanetGetDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.ExoplanetService;
+import ch.uzh.ifi.hase.soprafs24.service.UserService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
  * Exoplanet Controller
@@ -26,9 +34,15 @@ import java.util.stream.Collectors;
 public class ExoplanetController {
 
     private final ExoplanetService exoplanetService;
+    private final SimpMessagingTemplate messagingTemplate;
+    private final UserService userService;
+    private ExoplanetRepository exoplanetRepository;
 
-    public ExoplanetController(ExoplanetService exoplanetService) {
+    public ExoplanetController(ExoplanetService exoplanetService, SimpMessagingTemplate messagingTemplate, UserService userService, ExoplanetRepository exoplanetRepository) {
+        this.messagingTemplate = messagingTemplate;
         this.exoplanetService = exoplanetService;
+        this.userService = userService;
+        this.exoplanetRepository = exoplanetRepository;
     }
 
     /**
@@ -97,6 +111,24 @@ public class ExoplanetController {
     @ResponseStatus(HttpStatus.CREATED)
     public void addCommentToExoplanet(@PathVariable String id, @RequestBody CommentPostDTO commentPostDTO) {
         exoplanetService.addComment(id, commentPostDTO);
+
+        // include user + exoplanet info in the message
+        User user = userService.getUserById(commentPostDTO.getUserId());
+        UserGetDTO userDTO = DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
+        Exoplanet exoplanet = exoplanetRepository.findById(id).orElseThrow(() ->
+            new ResponseStatusException(HttpStatus.NOT_FOUND, "Exoplanet not found")
+        );
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("user", userDTO);
+        payload.put("exoplanet", exoplanet);
+
+        // Notify frontend that a new comment was added to this exoplanet
+        // This will send a message to subscribers of /topic/comments/{exoplanetId}.
+        messagingTemplate.convertAndSend("/topic/comments/" + id, payload);
+
+        // Global comment update
+        messagingTemplate.convertAndSend("/topic/comments", payload);
     }
 
     @GetMapping("/{id}/comments")
