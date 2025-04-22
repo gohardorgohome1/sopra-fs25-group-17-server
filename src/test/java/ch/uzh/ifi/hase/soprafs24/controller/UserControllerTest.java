@@ -48,8 +48,8 @@ public class UserControllerTest {
   @MockBean
   private DTOMapper dtoMapper;
 
-  @Test
 
+  @Test
   public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
     // given
     User user = new User();
@@ -71,6 +71,7 @@ public class UserControllerTest {
         .andExpect(jsonPath("$[0].username", is(user.getUsername())))
         .andExpect(jsonPath("$[0].status", is(user.getStatus().toString())));
   }
+
   @Test
   // Tests: GET /users/[userId] Status: 200 OK
   public void getUserById_UserExists_ShouldReturnUser() throws Exception {
@@ -108,12 +109,7 @@ public class UserControllerTest {
     // then
     mockMvc.perform(getRequest)
         .andExpect(status().isNotFound()); // 404 Not Found
-
-
   }
-
-
-
 
   @Test
   //Tests: POST /users Status: 201 OK
@@ -160,10 +156,95 @@ public class UserControllerTest {
   
     mockMvc.perform(postRequest)
         .andExpect(status().isConflict()); // 409 Conflict
-
-
   }
 
+  @Test
+  //Tests: POST /login Status: 200 OK
+  public void loginUser_validInput_userLoggedIn() throws Exception {
+    // given
+    User user = new User();
+    user.setId("1");
+    user.setUsername("testUsername");
+    user.setToken("1");
+    user.setStatus(UserStatus.ONLINE);
+    user.setPassword("testPassword");
+
+    UserPostDTO userPostDTO = new UserPostDTO();
+    userPostDTO.setUsername("testUsername");
+    userPostDTO.setPassword("testPassword");
+
+    given(userService.login(Mockito.any(), Mockito.any())).willReturn(user);
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/login")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(userPostDTO));
+
+    // then
+    mockMvc.perform(postRequest)
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(user.getId())))
+        .andExpect(jsonPath("$.username", is(user.getUsername())))
+        .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
+  }
+
+  @Test
+  //Tests: POST /login Status: 401 ERROR
+  public void loginUser_invalidInput_Username_does_not_exist() throws Exception {
+    // given
+    User user = new User();
+    user.setId("1");
+    user.setUsername("testUsername");
+    user.setToken("1");
+    user.setStatus(UserStatus.ONLINE);
+    user.setPassword("testPassword");
+
+    UserPostDTO userPostDTO = new UserPostDTO();
+    userPostDTO.setUsername("testWrongUsername");
+    userPostDTO.setPassword("testPassword");
+
+    given(userService.login(Mockito.any(), Mockito.any()))
+      .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password."));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/login")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(userPostDTO));
+
+    // then
+    mockMvc.perform(postRequest)
+        .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  //Tests: POST /login Status: 401 ERROR
+  public void loginUser_invalidInput_wrong_password() throws Exception {
+    // given
+    User user = new User();
+    user.setId("1");
+    user.setUsername("testUsername");
+    user.setToken("1");
+    user.setStatus(UserStatus.ONLINE);
+    user.setPassword("testPassword");
+
+    UserPostDTO userPostDTO = new UserPostDTO();
+    userPostDTO.setUsername("testUsername");
+    userPostDTO.setPassword("testWrongPassword");
+
+    given(userService.login(Mockito.any(), Mockito.any()))
+      .willThrow(new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid username or password."));
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder postRequest = post("/login")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(asJsonString(userPostDTO));
+
+    // then
+    mockMvc.perform(postRequest)
+        .andExpect(status().isUnauthorized());
+  }
+
+  /* At the moment, there is no option to change the Username on our Web-App!
   @Test
   // Tests: PUT /users/[userId] Status: 204 OK
   public void update_User_profile() throws Exception {
@@ -186,8 +267,6 @@ public class UserControllerTest {
     // then
     mockMvc.perform(putRequest)
         .andExpect(status().isNoContent()); // 204 No Content
-
-
   }
 
 
@@ -209,16 +288,8 @@ public class UserControllerTest {
     // then
     mockMvc.perform(putRequest)
         .andExpect(status().isNotFound()); // 404 Not Found
-
-
   }
-
-
-
-
-
-
-
+  */
 
 
 
