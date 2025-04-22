@@ -1,4 +1,3 @@
-/*
 package ch.uzh.ifi.hase.soprafs24.repository;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
@@ -10,18 +9,52 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import java.time.LocalDateTime;
 
-@DataJpaTest
-public class UserRepositoryIntegrationTest {
+import org.junit.jupiter.api.BeforeEach;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-  @Autowired
-  private TestEntityManager entityManager;
+@DataMongoTest
+@ExtendWith(SpringExtension.class)
+public class UserRepositoryIntegrationTest {
 
   @Autowired
   private UserRepository userRepository;
 
-  
+  @BeforeEach
+    public void setUp() {
+        userRepository.deleteAll();
+    }
 
+  @Test
+  public void findByUsername_UserExists() {
+    // given
+    User user = new User();
+    user.setId("1");
+    user.setUsername("testUsername");
+    user.setToken("1");
+    user.setStatus(UserStatus.ONLINE);
+    user.setPassword("testPassword");
+
+    userRepository.save(user);
+
+    // when
+    User foundUser = userRepository.findByUsername("testUsername");
+
+    // then
+    assertNotNull(foundUser);
+    assertEquals("testUsername", foundUser.getUsername());
+  }
+
+  @Test
+  public void findByUsername_notFound() {
+      // when
+      User foundUser = userRepository.findByUsername("testWrongUsername");
+
+      // then
+      assertNull(foundUser);
+  }
 }
-*/
