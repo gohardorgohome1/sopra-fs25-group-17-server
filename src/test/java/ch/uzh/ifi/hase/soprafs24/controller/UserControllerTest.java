@@ -1,10 +1,10 @@
-/*
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
+import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * request without actually sending them over the network.
  * This tests if the UserController works.
  */
-/*
 @WebMvcTest(UserController.class)
 public class UserControllerTest {
 
@@ -45,6 +44,9 @@ public class UserControllerTest {
 
   @MockBean
   private UserService userService;
+
+  @MockBean
+  private DTOMapper dtoMapper;
 
   @Test
 
@@ -74,11 +76,11 @@ public class UserControllerTest {
   public void getUserById_UserExists_ShouldReturnUser() throws Exception {
     // given
     User user = new User();
-    user.setId(1L);
+    user.setId("1");
     user.setUsername("testUsername");
     user.setStatus(UserStatus.ONLINE);
 
-    given(userService.getUserById(1L)).willReturn(user);
+    given(userService.getUserById("1")).willReturn(user);
 
     // when
     MockHttpServletRequestBuilder getRequest = get("/users/1")
@@ -87,7 +89,7 @@ public class UserControllerTest {
     // then
     mockMvc.perform(getRequest)
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id", is(user.getId().intValue())))
+        .andExpect(jsonPath("$.id", is(user.getId())))
         .andExpect(jsonPath("$.username", is(user.getUsername())))
         .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
   }
@@ -96,7 +98,7 @@ public class UserControllerTest {
   // Tests: GET /users/[userId] Status: 404 ERROR
   public void user_with_UserId_not_found() throws Exception {
     // given
-    given(userService.getUserById(99L))
+    given(userService.getUserById("99"))
         .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
     // when
@@ -118,7 +120,7 @@ public class UserControllerTest {
   public void createUser_validInput_userCreated() throws Exception {
     // given
     User user = new User();
-    user.setId(1L);
+    user.setId("1");
     user.setUsername("testUsername");
     user.setToken("1");
     user.setStatus(UserStatus.ONLINE);
@@ -136,7 +138,7 @@ public class UserControllerTest {
     // then
     mockMvc.perform(postRequest)
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.id", is(user.getId().intValue())))
+        .andExpect(jsonPath("$.id", is(user.getId())))
         .andExpect(jsonPath("$.username", is(user.getUsername())))
         .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
   }
@@ -170,11 +172,11 @@ public class UserControllerTest {
     userPostDTO.setUsername("updatedUsername");
 
     User updatedUser = new User();
-    updatedUser.setId(1L);
+    updatedUser.setId("1");
     updatedUser.setUsername("updatedUsername");
 
     // Mocking successful update (return updated user instead of null)
-    given(userService.updateUser(Mockito.eq(1L), Mockito.any())).willReturn(updatedUser);
+    given(userService.updateUser(Mockito.eq("1"), Mockito.any())).willReturn(updatedUser);
 
     // when
     MockHttpServletRequestBuilder putRequest = put("/users/1")
@@ -196,7 +198,7 @@ public class UserControllerTest {
     UserPostDTO userPostDTO = new UserPostDTO();
     userPostDTO.setUsername("updatedUsername");
 
-    given(userService.updateUser(Mockito.eq(99L), Mockito.any()))
+    given(userService.updateUser(Mockito.eq("99"), Mockito.any()))
         .willThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
 
     // when
@@ -228,7 +230,6 @@ public class UserControllerTest {
    * @param object
    * @return string
    */
-  /*
   private String asJsonString(final Object object) {
     try {
       return new ObjectMapper().writeValueAsString(object);
@@ -238,4 +239,3 @@ public class UserControllerTest {
     }
   }
 }
-*/
