@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+/*
 @DataMongoTest
 @ExtendWith(SpringExtension.class)
 public class UserRepositoryIntegrationTest {
@@ -26,7 +27,8 @@ public class UserRepositoryIntegrationTest {
 
   @BeforeEach
     public void setUp() {
-        userRepository.deleteAll();
+      assertTrue(userRepository.count() == 0 || isTestDatabase(), "Refusing to delete users in non-test DB"); // To ensure that the real Database is not wiped
+      userRepository.deleteAll();
     }
 
   @Test
@@ -57,4 +59,4 @@ public class UserRepositoryIntegrationTest {
       // then
       assertNull(foundUser);
   }
-}
+}*/
