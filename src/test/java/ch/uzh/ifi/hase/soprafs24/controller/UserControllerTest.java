@@ -29,6 +29,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 
 /**
  * UserControllerTest
@@ -242,6 +244,42 @@ public class UserControllerTest {
     // then
     mockMvc.perform(postRequest)
         .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  //Tests: PUT /users/{id}/logout Status: 200 OK
+  public void logoutUser_valid_userLoggedOut() throws Exception {
+    // given
+    User user = new User();
+    user.setId("1");
+    user.setUsername("testUsername");
+    user.setToken("1");
+    user.setStatus(UserStatus.OFFLINE);
+    user.setPassword("testPassword");
+
+    doNothing().when(userService).logoutUser(Mockito.any());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest = put("/users/1/logout");
+
+    // then
+    mockMvc.perform(putRequest)
+        .andExpect(status().isOk());
+  }
+
+  @Test
+  //Tests: PUT /users/{id}/logout Status: 404 NOT FOUND
+  public void logoutUser_invalid_User_not_found() throws Exception {
+    // given
+    doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"))
+      .when(userService).logoutUser(Mockito.any());
+
+    // when/then -> do the request + validate the result
+    MockHttpServletRequestBuilder putRequest = put("/users/1/logout");
+
+    // then
+    mockMvc.perform(putRequest)
+        .andExpect(status().isNotFound());
   }
 
   /* At the moment, there is no option to change the Username on our Web-App!
