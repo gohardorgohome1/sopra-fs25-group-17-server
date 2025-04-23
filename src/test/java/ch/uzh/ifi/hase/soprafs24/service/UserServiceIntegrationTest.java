@@ -1,4 +1,3 @@
-/* 
 package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.constant.UserStatus;
@@ -7,78 +6,52 @@ import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Test class for the UserResource REST resource.
- *
- * @see UserService
- */
-/*
-@WebAppConfiguration
-@SpringBootTest
+@DataMongoTest
+@Import(UserService.class)
+@ActiveProfiles("test")
 public class UserServiceIntegrationTest {
 
-  @Qualifier("userRepository")
-  @Autowired
-  private UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
-  @Autowired
-  private UserService userService;
+    @Autowired
+    private UserService userService;
 
-  @BeforeEach
-  public void setup() {
-    userRepository.deleteAll();
-  }
-/* 
-  @Test
-  public void createUser_validInputs_success() {
-    // given
-    assertNull(userRepository.findByUsername("testUsername"));
+    @BeforeEach
+    void setup() {
+        userRepository.deleteAll();
+    }
 
-    User testUser = new User();
-    testUser.setName("testName");
-    testUser.setUsername("testUsername");
+    @Test
+    public void createUser_validInputs_success() {
+        User user = new User();
+        user.setUsername("testuser");
 
-    // when
-    User createdUser = userService.createUser(testUser);
+        User createdUser = userService.createUser(user);
 
-    // then
-    // assertEquals(testUser.getId(), createdUser.getId());
-    assertEquals(testUser.getName(), createdUser.getName());
-    //assertEquals(testUser.getUsername(), createdUser.getUsername());
-    assertNotNull(createdUser.getToken());
-    assertEquals(UserStatus.ONLINE, createdUser.getStatus());
-  }
-  */
-/*
-  @Test
-  public void createUser_duplicateUsername_throwsException() {
-    assertNull(userRepository.findByUsername("testUsername"));
+        assertNotNull(createdUser.getId());
+        assertEquals("testuser", createdUser.getUsername());
+        assertEquals(UserStatus.ONLINE, createdUser.getStatus());
+        assertNotNull(createdUser.getToken());
+    }
 
-    User testUser = new User();
-    testUser.setName("testName");
-    testUser.setUsername("testUsername");
-    User createdUser = userService.createUser(testUser);
+    @Test
+    public void createUser_duplicateUsername_throwsException() {
+        User user1 = new User();
+        user1.setUsername("dupeUser");
 
-    userRepository.save(createdUser);
-    userRepository.flush(); // Ensure it's written to the database before the second user
+        userService.createUser(user1);
 
+        User user2 = new User();
+        user2.setUsername("dupeUser");
 
-    // attempt to create second user with same username
-    User testUser2 = new User();
-
-    // change the name but forget about the username
-    testUser2.setName("testName2");
-    testUser2.setUsername("testUsername");
-
-    // check that an error is thrown
-    assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser2));
-  }
-    
-}*/
+        assertThrows(ResponseStatusException.class, () -> userService.createUser(user2));
+    }
+}
