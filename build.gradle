@@ -56,7 +56,7 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
-    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:3.5.4'
+    testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.6.3'
 
 }
 
