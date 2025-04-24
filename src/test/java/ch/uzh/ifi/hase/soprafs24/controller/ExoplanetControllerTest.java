@@ -4,7 +4,10 @@ import ch.uzh.ifi.hase.soprafs24.entity.Exoplanet;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.ExoplanetPostDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.ExoplanetGetDTO;
 import ch.uzh.ifi.hase.soprafs24.service.ExoplanetService;
+import ch.uzh.ifi.hase.soprafs24.repository.ExoplanetRepository;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs24.service.UserService;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -46,6 +49,15 @@ public class ExoplanetControllerTest {
 
   @MockBean
   private DTOMapper dtoMapper;
+
+  @MockBean
+  private ExoplanetRepository exoplanetRepository;
+
+  @MockBean
+  private UserService userService;
+
+  @MockBean
+  private SimpMessagingTemplate messagingTemplate;
 
   // Delete Exoplanet by ID
   // Tests: Delete /exoplanets/1 Status: 204 NO_CONTENT
