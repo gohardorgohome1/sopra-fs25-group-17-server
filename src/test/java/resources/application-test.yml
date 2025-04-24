@@ -1,0 +1,6 @@
+spring:
+  data:
+    mongodb:
+      port: 0 # use random port for embedded MongoDB
+  profiles:
+    active: test

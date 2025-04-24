@@ -16,9 +16,11 @@ import java.util.stream.Collectors;
 public class UserController {
 
   private final UserService userService;
+  private final DTOMapper dtoMapper;
 
-  UserController(UserService userService) {
-    this.userService = userService;
+  public UserController(UserService userService, DTOMapper dtoMapper) {
+      this.userService = userService;
+      this.dtoMapper = dtoMapper;
   }
 
   @GetMapping("/users")
