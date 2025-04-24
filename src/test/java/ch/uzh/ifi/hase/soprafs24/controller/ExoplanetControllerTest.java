@@ -70,7 +70,7 @@ public class ExoplanetControllerTest {
     verify(exoplanetService, times(1)).deleteExoplanet("1"); // verify that it is called once
   }
   // Get ranking (with asc and dsc)
-  // Tests: Get /exoplanets/ranking Status: 201 OK
+  // Tests: Get /exoplanets/ranking Status: 200 OK
   @Test
   public void givenListOfExoplanets_whenGetRanking_thenCallRepository() throws Exception {
 
