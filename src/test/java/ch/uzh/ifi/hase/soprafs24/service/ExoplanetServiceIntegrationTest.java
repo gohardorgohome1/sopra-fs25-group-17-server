@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.service;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Exoplanet;
 import ch.uzh.ifi.hase.soprafs24.repository.ExoplanetRepository;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.CommentGetDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,10 +99,10 @@ public class ExoplanetServiceIntegrationTest {
 
         exoplanetService.addComment(exoplanet0.getId(), commentPostDTO);
 
-        Exoplanet found = exoplanetService.getExoplanetById(exoplanet0.getId());
+        List<CommentGetDTO> foundComments = exoplanetService.getComments("exoId0");
 
-        assertNotNull(found.getComments());
-        Exoplanet.Comment foundComment = found.getComments().get(0);
+        assertNotNull(foundComments);
+        CommentGetDTO foundComment = foundComments.get(0);
         assertEquals(commentPostDTO.getUserId(), foundComment.getUserId());
         assertEquals(commentPostDTO.getMessage(), foundComment.getMessage());
         assertNotNull(foundComment.getCreatedAt());
