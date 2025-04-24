@@ -5,15 +5,16 @@ import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import static org.mockito.Mockito.doThrow;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.beans.Transient;
 import java.util.List;
@@ -24,17 +25,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class UserServiceTest {
 
-  @Mock
-  private UserRepository userRepository;
+    @Mock
+    private UserRepository userRepository;
 
-  @InjectMocks
-  private UserService userService;
+    @InjectMocks
+    private UserService userService;
 
-  private User testUser;
+    private User testUser;
 
-  @BeforeEach
-  public void setup() {
-    MockitoAnnotations.openMocks(this);
+    @BeforeEach
+    public void setup() {
+        MockitoAnnotations.openMocks(this);
 
     // given
     testUser = new User();
@@ -52,8 +53,7 @@ public class UserServiceTest {
     // testUser
     User createdUser = userService.createUser(testUser);
 
-    // then
-    Mockito.verify(userRepository, Mockito.times(1)).save(Mockito.any());
+        verify(userRepository, times(1)).save(any());
 
     assertEquals(testUser.getId(), createdUser.getId());
     assertEquals(testUser.getUsername(), createdUser.getUsername());

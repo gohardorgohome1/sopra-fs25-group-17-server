@@ -57,6 +57,8 @@ public interface DTOMapper {
 
   List<DataPointGetDTO> convertDataPointList(List<DataPoint> dataPoints);
 
+  // --- Comment Mapping ---
+
   @Mapping(source = "userId", target = "userId")
   @Mapping(source = "message", target = "message")
   @Mapping(source = "createdAt", target = "createdAt")

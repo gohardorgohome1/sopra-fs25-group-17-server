@@ -269,23 +269,23 @@ public class PhotometricCurveService {
         return (Bmax - Bmin) / Bmax;
     }
 
-    private float calculateRadius(Float depth, Float starRadius) {
+    public float calculateRadius(Float depth, Float starRadius) {
         return starRadius * SOLAR_RADIUS_TO_EARTH * (float) sqrt(depth);
     }
 
-    private float calculateSurfaceGravity(Float mass, Float radius) {
+    public float calculateSurfaceGravity(Float mass, Float radius) {
         return mass / (float) pow(radius, 2);
     }
 
-    private float calculateEscapeVelocity(Float mass, Float radius) {
+    public float calculateEscapeVelocity(Float mass, Float radius) {
         return (float) sqrt(mass / radius);
     }
 
-    private float calculateDensity(Float mass, Float radius) {
+    public float calculateDensity(Float mass, Float radius) {
         return mass / (float) pow(radius, 3);
     }
 
-    private float calculateESI(Float r, Float d, Float v, Float t) {
+    public float calculateESI(Float r, Float d, Float v, Float t) {
         float esi_r = (float) pow(1 - Math.abs((r - 1) / (r + 1)), ESI_RW / 4);
         float esi_d = (float) pow(1 - Math.abs((d - 1) / (d + 1)), ESI_DW / 4);
         float esi_v = (float) pow(1 - Math.abs((v - 1) / (v + 1)), ESI_VW / 4);
