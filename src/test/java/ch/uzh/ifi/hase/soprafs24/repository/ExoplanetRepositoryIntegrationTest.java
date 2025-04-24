@@ -62,8 +62,7 @@ public class ExoplanetRepositoryIntegrationTest {
         exoplanet1.setPlanetName("mongoTestPlanet1");
         exoplanet1.setMass(2.2F);
 
-        exoplanetRepository.save(exoplanet0);
-        exoplanetRepository.save(exoplanet1);
+        exoplanetRepository.saveAll(List.of(exoplanet0, exoplanet1));
 
         List<Exoplanet> found = exoplanetRepository.findAllByOrderByMassAsc();
 
