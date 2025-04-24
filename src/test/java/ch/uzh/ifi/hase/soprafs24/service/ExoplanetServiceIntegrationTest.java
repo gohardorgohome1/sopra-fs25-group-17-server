@@ -94,14 +94,14 @@ public class ExoplanetServiceIntegrationTest {
         exoplanetRepository.save(exoplanet0);
 
         CommentPostDTO commentPostDTO = new CommentPostDTO();
-        commentPostDTO.setUserId("exoId0");
+        commentPostDTO.setUserId("userId0");
         commentPostDTO.setMessage("Great Planet!");
 
         exoplanetService.addComment(exoplanet0.getId(), commentPostDTO);
 
         List<CommentGetDTO> foundComments = exoplanetService.getComments("exoId0");
+        assertEquals(1, foundComments.size());
 
-        assertNotNull(foundComments);
         CommentGetDTO foundComment = foundComments.get(0);
         assertEquals(commentPostDTO.getUserId(), foundComment.getUserId());
         assertEquals(commentPostDTO.getMessage(), foundComment.getMessage());
