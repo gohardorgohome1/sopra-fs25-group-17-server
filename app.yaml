@@ -15,6 +15,8 @@ network:
 env_variables:
   JETTY_MODULES_ENABLE: websocket
 
+service_account: sopra-fs25-group-17-server@appspot.gserviceaccount.com
+
 handlers:
   # Route all websocket-related paths to the backend
   - url: /ws/.*
@@ -23,3 +25,4 @@ handlers:
   # Optional: catch-all rule to pass everything to Spring
   - url: /.*
     script: auto
+  
