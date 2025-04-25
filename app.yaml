@@ -23,3 +23,7 @@ handlers:
   # Optional: catch-all rule to pass everything to Spring
   - url: /.*
     script: auto
+
+beta_settings:
+  service_account: sopra-fs25-group-17-server@appspot.gserviceaccount.com
+  
