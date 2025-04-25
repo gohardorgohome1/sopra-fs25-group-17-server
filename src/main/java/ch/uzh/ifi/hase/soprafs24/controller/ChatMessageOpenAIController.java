@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.ChatMessageOpenAI;
 import ch.uzh.ifi.hase.soprafs24.repository.ChatMessageOpenAIRepository;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.ChatRequestDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.ChatResponseDTO;
+import ch.uzh.ifi.hase.soprafs24.utils.SecretManagerUtil;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
@@ -16,8 +17,23 @@ import java.util.*;
 @RequestMapping("/openai")
 public class ChatMessageOpenAIController {
 
-    private static final String OPENAI_API_KEY = System.getenv("OPENAI_API_KEY");
     private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
+    private static final String PROJECT_ID = "209687575230";
+    private static final String SECRET_ID = "OPENAI_API_KEY";
+    private static final String OPENAI_API_KEY = loadOpenAIApiKey();
+
+    private static String loadOpenAIApiKey() {
+        String localKey = System.getenv("OPENAI_API_KEY");
+        if (localKey != null && !localKey.isBlank()) {
+            return localKey;
+        }
+
+        try {
+            return SecretManagerUtil.getSecret(PROJECT_ID, SECRET_ID);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to load OpenAI API key", e);
+        }
+    }
 
     @Autowired
     private ChatMessageOpenAIRepository chatRepo;
@@ -26,17 +42,15 @@ public class ChatMessageOpenAIController {
     public ResponseEntity<ChatResponseDTO> chatWithOpenAI(@RequestBody ChatRequestDTO chatRequest) {
         RestTemplate restTemplate = new RestTemplate();
 
-
         for (ChatRequestDTO.Message msg : chatRequest.getMessages()) {
             ChatMessageOpenAI userMsg = new ChatMessageOpenAI();
             userMsg.setUserId(chatRequest.getUserId());
-            userMsg.setSenderName(chatRequest.getUsername()); 
+            userMsg.setSenderName(chatRequest.getUsername());
             userMsg.setRole(msg.getRole());
             userMsg.setContent(msg.getContent());
             userMsg.setCreatedAt(new Date());
             chatRepo.save(userMsg);
         }
-        
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("model", "gpt-4o-mini-2024-07-18");
@@ -72,7 +86,6 @@ public class ChatMessageOpenAIController {
     public ResponseEntity<List<ChatMessageOpenAI>> getChatHistory() {
         List<ChatMessageOpenAI> messages = chatRepo.findAll();
         messages.sort(Comparator.comparing(ChatMessageOpenAI::getCreatedAt));
-    return ResponseEntity.ok(messages);
-}
-
+        return ResponseEntity.ok(messages);
+    }
 }

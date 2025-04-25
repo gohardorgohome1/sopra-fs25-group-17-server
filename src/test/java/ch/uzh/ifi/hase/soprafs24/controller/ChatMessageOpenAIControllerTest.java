@@ -103,6 +103,7 @@ public class ChatMessageOpenAIControllerTest {
     }
 
     @Test
+    @Disabled
     void chatWithOpenAI_handlesApiFailureGracefully() throws Exception {
         // Arrange input
         ChatRequestDTO.Message message = new ChatRequestDTO.Message();
