@@ -20,9 +20,11 @@ public class ChatMessageOpenAIController {
     private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
     private static final String PROJECT_ID = "209687575230";
     private static final String SECRET_ID = "OPENAI_API_KEY";
-    private static final String OPENAI_API_KEY = loadOpenAIApiKey();
 
-    private static String loadOpenAIApiKey() {
+    @Autowired
+    private ChatMessageOpenAIRepository chatRepo;
+
+    private String getOpenAIApiKey() {
         String localKey = System.getenv("OPENAI_API_KEY");
         if (localKey != null && !localKey.isBlank()) {
             return localKey;
@@ -34,9 +36,6 @@ public class ChatMessageOpenAIController {
             throw new RuntimeException("Failed to load OpenAI API key", e);
         }
     }
-
-    @Autowired
-    private ChatMessageOpenAIRepository chatRepo;
 
     @PostMapping("/chat")
     public ResponseEntity<ChatResponseDTO> chatWithOpenAI(@RequestBody ChatRequestDTO chatRequest) {
@@ -58,7 +57,7 @@ public class ChatMessageOpenAIController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(OPENAI_API_KEY);
+        headers.setBearerAuth(getOpenAIApiKey());
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
 
