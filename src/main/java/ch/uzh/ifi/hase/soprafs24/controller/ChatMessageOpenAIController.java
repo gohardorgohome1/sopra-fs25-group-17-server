@@ -26,16 +26,26 @@ public class ChatMessageOpenAIController {
 
     private String getOpenAIApiKey() {
         String localKey = System.getenv("OPENAI_API_KEY");
+    
         if (localKey != null && !localKey.isBlank()) {
+            System.out.println("🔐 Using OPENAI_API_KEY from environment variable.");
             return localKey;
         }
-
+    
+        System.out.println("🔐 Environment variable not found. Attempting to load from Secret Manager...");
+    
         try {
-            return SecretManagerUtil.getSecret(PROJECT_ID, SECRET_ID);
+            String secret = SecretManagerUtil.getSecret(PROJECT_ID, SECRET_ID);
+            System.out.println("✅ Successfully retrieved API key from Secret Manager.");
+            return secret;
         } catch (Exception e) {
+            System.out.println("❌ Failed to access Secret Manager.");
+            System.out.println("❌ Exception message: " + e.getMessage());
+            e.printStackTrace(); 
             throw new RuntimeException("Failed to load OpenAI API key", e);
         }
     }
+    
 
     @PostMapping("/chat")
     public ResponseEntity<ChatResponseDTO> chatWithOpenAI(@RequestBody ChatRequestDTO chatRequest) {
