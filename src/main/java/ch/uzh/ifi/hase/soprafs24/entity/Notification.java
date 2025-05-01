@@ -3,6 +3,8 @@ package ch.uzh.ifi.hase.soprafs24.entity;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDateTime;
 
 @Document(collection = "notifications")
@@ -16,6 +18,7 @@ public class Notification {
     private String planetName;
 
     private boolean seen = false;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime createdAt;
 
     // Getters and Setters

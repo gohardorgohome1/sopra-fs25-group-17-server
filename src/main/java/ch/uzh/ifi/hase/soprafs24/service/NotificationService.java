@@ -55,6 +55,8 @@ public class NotificationService {
             n.setSeen(true); // Mark as seen
         }
         
+        notificationRepository.saveAll(notifs); // Persist changes
+
         return notifs;
     }
 
@@ -63,6 +65,7 @@ public class NotificationService {
         for (Notification n : notifs) {
             n.setSeen(true); // Mark as seen
         }
+        notificationRepository.saveAll(notifs); // Persist changes
 
     }  
 
