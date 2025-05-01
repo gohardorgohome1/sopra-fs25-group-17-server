@@ -7,6 +7,7 @@ import ch.uzh.ifi.hase.soprafs24.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +35,7 @@ public class NotificationService {
             n.setPlanetName(planetName);
             n.setSeen(u.getId().equals(ownerId)); // uploader gets "seen = true"
             // n.setSeen(false); // New notifications are unseen
+            n.setCreatedAt(LocalDateTime.now());
             notifications.add(n);
         }
 
@@ -41,6 +43,9 @@ public class NotificationService {
         notificationRepository.saveAll(notifications);
     }
 
+    public List<Notification> getAllNotificationsForUser(String userId) {
+        return notificationRepository.findByUserId(userId);
+    }
     
     // Fetch unseen notifications for a user
     public List<Notification> getUnseenNotificationsForUser(String userId) {
@@ -59,6 +64,19 @@ public class NotificationService {
             n.setSeen(true); // Mark as seen
         }
 
+    }  
+
+    public void markSingleNotificationAsSeen(String userId, String exoplanetId) {
+        List<Notification> notifications = notificationRepository.findByUserIdAndExoplanetId(userId, exoplanetId);
+    
+        for (Notification n : notifications) {
+            if (!n.isSeen()) {
+                n.setSeen(true);
+            }
+        }
+
+        notificationRepository.saveAll(notifications);
     }
+    
 
 }

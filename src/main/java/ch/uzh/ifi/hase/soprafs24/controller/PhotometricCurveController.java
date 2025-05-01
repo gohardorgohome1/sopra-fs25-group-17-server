@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.PhotometricCurve;
 import ch.uzh.ifi.hase.soprafs24.service.PhotometricCurveService;
 import ch.uzh.ifi.hase.soprafs24.service.NotificationService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 // import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,11 +34,14 @@ public class PhotometricCurveController {
     private NotificationService notificationService;
 
 
-    public PhotometricCurveController(PhotometricCurveService photometricCurveService, SimpMessagingTemplate messagingTemplate, UserService userService, ExoplanetRepository exoplanetRepository) {
+    public PhotometricCurveController(PhotometricCurveService photometricCurveService, SimpMessagingTemplate messagingTemplate, 
+                                        UserService userService, ExoplanetRepository exoplanetRepository,
+                                        NotificationService notificationService) {
         this.photometricCurveService = photometricCurveService;
         this.messagingTemplate = messagingTemplate;
         this.userService = userService;
         this.exoplanetRepository = exoplanetRepository;
+        this.notificationService = notificationService;
     }
 
     @PostMapping("/upload")
