@@ -1,5 +1,25 @@
 # https://cloud.google.com/appengine/docs/the-appengine-environments#comparing_high-level_features
 # https://cloud.google.com/appengine/docs/standard
 
-runtime: java17
+runtime: java
+env: flex
 instance_class: F2
+
+runtime_config:
+  operating_system: "ubuntu22"
+  runtime_version: "21"
+
+network:
+  session_affinity: true
+
+env_variables:
+  JETTY_MODULES_ENABLE: websocket
+
+handlers:
+  # Route all websocket-related paths to the backend
+  - url: /ws/.*
+    script: auto
+
+  # Optional: catch-all rule to pass everything to Spring
+  - url: /.*
+    script: auto

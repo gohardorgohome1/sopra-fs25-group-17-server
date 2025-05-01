@@ -4,6 +4,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection = "exoplanets")
@@ -26,11 +28,40 @@ public class Exoplanet implements Serializable {
     private float escapeVelocity;
     private float earthSimilarityIndex;
 
-    private List<String> comments;
+    private List<Comment> comments = new ArrayList<>();
 
     private String photometricCurveId;
 
-    // Getters and Setters
+    public class Comment {
+        private String userId;
+        private String message;
+        private LocalDateTime createdAt;
+
+        public String getUserId() {
+            return userId;
+        }
+    
+        public void setUserId(String userId) {
+            this.userId = userId;
+        }
+    
+        public String getMessage() {
+            return message;
+        }
+    
+        public void setMessage(String message) {
+            this.message = message;
+        }
+    
+        public LocalDateTime getCreatedAt() {
+            return createdAt;
+        }
+    
+        public void setCreatedAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+        }
+    }
+
     public String getId() {
         return id;
     }
@@ -134,12 +165,12 @@ public class Exoplanet implements Serializable {
     public void setEarthSimilarityIndex(float earthSimilarityIndex) {
         this.earthSimilarityIndex = earthSimilarityIndex;
     }
-
-    public List<String> getComments() {
+    
+    public List<Comment> getComments() {
         return comments;
     }
-
-    public void setComments(List<String> comments) {
+    
+    public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
 
