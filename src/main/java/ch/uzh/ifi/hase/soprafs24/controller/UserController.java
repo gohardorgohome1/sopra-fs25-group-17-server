@@ -63,4 +63,11 @@ public class UserController {
     userService.updateUser(id, user);
     return ResponseEntity.noContent().build();
   }
+
+    @PutMapping("/users/{id}/username")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void setUsername(@PathVariable String id, @RequestBody UserPostDTO userPostDTO) {
+        userService.setUsername(id, userPostDTO.getUsername());
+    }
 }
