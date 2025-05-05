@@ -120,8 +120,10 @@ public class ExoplanetController {
         );
 
         Map<String, Object> payload = new HashMap<>();
-        payload.put("user", userDTO);
-        payload.put("exoplanet", exoplanet);
+        payload.put("commenterUsername", userDTO.getUsername());
+        payload.put("ownerId", exoplanet.getOwnerId());
+        payload.put("planetName", exoplanet.getPlanetName());
+        payload.put("exoplanetId", exoplanet.getId());
 
         // Notify frontend that a new comment was added to this exoplanet
         // This will send a message to subscribers of /topic/comments/{exoplanetId}.
