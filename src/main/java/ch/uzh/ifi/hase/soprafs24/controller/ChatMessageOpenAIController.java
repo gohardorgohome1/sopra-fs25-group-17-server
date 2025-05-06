@@ -22,6 +22,53 @@ public class ChatMessageOpenAIController {
     @Autowired
     private ChatMessageOpenAIRepository chatRepo;
 
+    @PostMapping("/helper")
+    public ResponseEntity<ChatResponseDTO> correctExoplanetName(@RequestBody String exoplanetName) {
+        RestTemplate restTemplate = new RestTemplate();
+
+
+        String userPrompt = String.format(
+    "You are an Exoplanet Name corrector. You must provide the correct name for a given exoplanet. " +
+    "You must take into account that the letter of the planet after the name of the Host Star has to have a blank space of separation. " +
+    "You must also be careful about uppercase and lowercase letters. " +
+    "You must provide names of exoplanets that exist, as the user could give you an invented one!" +
+    "An example of your task: Given X0-5b as an input, you should return the corrected name as XO-5 b. " +
+    "Some common star names names that are prone to be spelled wrong are the following and you should correct are: CoRoT, TrES, XO, HAT-P-1, WASP, GJ, HD, HAT-P-2, OGLE-TR-113, etc " +
+    "Your answer has to be given in this strict form: \"AI Assistance: This exoplanet name is wrong! Were you thinking about this exoplanet? <exoplanet name corrected provided by the AI>. Please try again.\" " +
+    "The name of the exoplanet that you have to correct is %s.",
+    exoplanetName
+        );
+
+
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("model", "gpt-4o-mini-2024-07-18");
+
+        List<Map<String, String>> messages = new ArrayList<>();
+        messages.add(Map.of("role", "user", "content", userPrompt));
+        requestBody.put("messages", messages);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(OPENAI_API_KEY);
+
+        HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
+
+        try {
+            ResponseEntity<Map> response = restTemplate.postForEntity(OPENAI_API_URL, request, Map.class);
+            List<Map<String, Object>> choices = (List<Map<String, Object>>) response.getBody().get("choices");
+            Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
+            String reply = (String) message.get("content");
+
+            return ResponseEntity.ok(new ChatResponseDTO(reply));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ChatResponseDTO("Error calling OpenAI: " + e.getMessage()));
+        }
+    }
+
+
+    
+
     @PostMapping("/chat")
     public ResponseEntity<ChatResponseDTO> chatWithOpenAI(@RequestBody ChatRequestDTO chatRequest) {
         RestTemplate restTemplate = new RestTemplate();
