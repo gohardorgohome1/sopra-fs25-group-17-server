@@ -39,6 +39,10 @@ public class PhotometricCurveControllerTest {
     @MockBean
     private ExoplanetRepository exoplanetRepository;
 
+    @MockBean
+    private NotificationService notificationService;
+
+
     @Test
     void getPhotometricCurveById_returnsCurve() throws Exception {
         PhotometricCurve mockCurve = new PhotometricCurve();
@@ -78,6 +82,8 @@ public class PhotometricCurveControllerTest {
 
         when(userService.getUserById("user1")).thenReturn(mockUser);
         when(exoplanetRepository.findById("exo1")).thenReturn(Optional.of(mockExo));
+        
+        Mockito.doNothing().when(notificationService).createNotificationsForAllUsers(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString());
 
         mockMvc.perform(multipart("/photometric-curves/upload")
                         .file(file)
