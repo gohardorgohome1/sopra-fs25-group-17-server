@@ -73,21 +73,33 @@ public class ChatMessageOpenAIController {
     public ResponseEntity<ChatResponseDTO> chatWithOpenAI(@RequestBody ChatRequestDTO chatRequest) {
         RestTemplate restTemplate = new RestTemplate();
 
-
         for (ChatRequestDTO.Message msg : chatRequest.getMessages()) {
             ChatMessageOpenAI userMsg = new ChatMessageOpenAI();
             userMsg.setUserId(chatRequest.getUserId());
-            userMsg.setSenderName(chatRequest.getUsername()); 
+            userMsg.setSenderName(chatRequest.getUsername());
             userMsg.setRole(msg.getRole());
             userMsg.setContent(msg.getContent());
             userMsg.setCreatedAt(new Date());
             chatRepo.save(userMsg);
         }
-        
+
+        Map<String, String> systemMessage = new HashMap<>();
+        systemMessage.put("role", "system");
+        systemMessage.put("content", "You are an exoplanet, astrophysicist and cosmology expert. Your task is to answer questions about science and respond accurately. However you must not respond to questions that does not have to do anything with exoplanets, physics, space or science and you should indicate the user that you are a customized exoplanets expert and you must answer only questions about that. Do not be too long wth your answers.");
+
+        List<Map<String, String>> openAIMessages = new ArrayList<>();
+        openAIMessages.add(systemMessage);
+
+        for (ChatRequestDTO.Message msg : chatRequest.getMessages()) {
+            Map<String, String> message = new HashMap<>();
+            message.put("role", msg.getRole());
+            message.put("content", msg.getContent());
+            openAIMessages.add(message);
+        }
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("model", "gpt-4o-mini-2024-07-18");
-        requestBody.put("messages", chatRequest.getMessages());
+        requestBody.put("messages", openAIMessages);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
@@ -114,6 +126,7 @@ public class ChatMessageOpenAIController {
                     .body(new ChatResponseDTO("Error calling OpenAI: " + e.getMessage()));
         }
     }
+
 
     @GetMapping("/chat/history")
     public ResponseEntity<List<ChatMessageOpenAI>> getChatHistory() {
