@@ -78,4 +78,13 @@ public class UserService {
           String.format("The username '%s' is not unique.", userToBeCreated.getUsername()));
     }
   }
+
+  public void setUsername(String id, String username) {
+      User user = userRepository.findById(id)
+              .orElseThrow(() ->
+                      new RuntimeException("User not found"));
+      user.setUsername(username);
+      checkIfUserExists(user); // avoid duplicate names also after changing a username
+      userRepository.save(user);
+  }
 }

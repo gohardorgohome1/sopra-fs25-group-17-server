@@ -67,6 +67,12 @@ bootJar {
     archiveFileName = "${archiveBaseName.get()}.${archiveExtension.get()}"
 }
 
+jacocoTestReport {
+    reports {
+        xml.required.set(true)
+    }
+}
+
 sonar {
     properties {
         property "sonar.projectKey", "gohardorgohome1_sopra-fs25-group-17-server"
@@ -75,16 +81,14 @@ sonar {
     }
 }
 
-test {
-    useJUnitPlatform()
-    testLogging.showStandardStreams = true
-    maxParallelForks = 1
-}
-
 jacocoTestReport {
     reports {
         xml.required.set(true)
     }
+}
+
+tasks.named("sonar").configure {
+    dependsOn(tasks.named("jacocoTestReport"))
 }
 
 test {

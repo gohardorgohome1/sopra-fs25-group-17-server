@@ -16,6 +16,7 @@ public class ChatMessageOpenAI {
     private String senderName; 
     private String role;
     private String content;
+    private String groupId;
 
     @CreatedDate
     private Date createdAt;
@@ -39,4 +40,7 @@ public class ChatMessageOpenAI {
 
     public Date getCreatedAt() { return createdAt; }
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
+
+    public String getGroupId() { return groupId; }
+    public void setGroupId(String groupId) { this.groupId = groupId; }
 }
