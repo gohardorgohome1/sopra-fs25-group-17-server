@@ -8,5 +8,8 @@ import java.util.List;
 
 @Repository
 public interface ChatMessageOpenAIRepository extends MongoRepository<ChatMessageOpenAI, String> {
+    List<ChatMessageOpenAI> findByGroupId(String groupId);
+    void deleteByGroupId(String groupId);
+
 }
 

@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
+import ch.uzh.ifi.hase.soprafs24.entity.ChatGroup;
 import ch.uzh.ifi.hase.soprafs24.entity.ChatMessageOpenAI;
+import ch.uzh.ifi.hase.soprafs24.repository.ChatGroupRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.ChatMessageOpenAIRepository;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.ChatRequestDTO;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.ChatResponseDTO;
@@ -77,6 +79,7 @@ public class ChatMessageOpenAIController {
             ChatMessageOpenAI userMsg = new ChatMessageOpenAI();
             userMsg.setUserId(chatRequest.getUserId());
             userMsg.setSenderName(chatRequest.getUsername());
+            userMsg.setGroupId(chatRequest.getGroupId());
             userMsg.setRole(msg.getRole());
             userMsg.setContent(msg.getContent());
             userMsg.setCreatedAt(new Date());
@@ -115,6 +118,7 @@ public class ChatMessageOpenAIController {
 
             ChatMessageOpenAI assistantMsg = new ChatMessageOpenAI();
             assistantMsg.setUserId(chatRequest.getUserId());
+            assistantMsg.setGroupId(chatRequest.getGroupId());
             assistantMsg.setRole("assistant");
             assistantMsg.setContent(reply);
             assistantMsg.setCreatedAt(new Date());
@@ -134,5 +138,40 @@ public class ChatMessageOpenAIController {
         messages.sort(Comparator.comparing(ChatMessageOpenAI::getCreatedAt));
     return ResponseEntity.ok(messages);
 }
+
+    @Autowired
+    private ChatGroupRepository chatGroupRepo;
+
+    @PostMapping("/chat/group")
+    public ResponseEntity<ChatGroup> createGroup(@RequestBody ChatGroup group) {
+        group.setCreatedAt(new Date());
+        ChatGroup saved = chatGroupRepo.save(group);
+        return ResponseEntity.ok(saved);
+    }
+
+    @GetMapping("/chat/groups/{userId}")
+    public ResponseEntity<List<ChatGroup>> getGroupsForUser(@PathVariable String userId) {
+        return ResponseEntity.ok(chatGroupRepo.findByUserIdsContaining(userId));
+    }
+
+    @GetMapping("/chat/history/{groupId}")
+    public ResponseEntity<List<ChatMessageOpenAI>> getGroupHistory(@PathVariable String groupId) {
+        List<ChatMessageOpenAI> messages = chatRepo.findByGroupId(groupId);
+        messages.sort(Comparator.comparing(ChatMessageOpenAI::getCreatedAt));
+        return ResponseEntity.ok(messages);
+    }
+
+    @DeleteMapping("/chat/group/{groupId}")
+    public ResponseEntity<Void> deleteGroup(@PathVariable String groupId) {
+        chatRepo.deleteByGroupId(groupId);
+        chatGroupRepo.deleteById(groupId);
+        return ResponseEntity.ok().build();
+}
+
+
+
+
+
+
 
 }

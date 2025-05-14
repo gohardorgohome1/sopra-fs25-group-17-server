@@ -27,6 +27,7 @@ public class ChatRequestDTO {
 
     private String userId;
     private String username; 
+    private String groupId;
     private List<Message> messages;
 
     public String getUserId() {
@@ -52,4 +53,7 @@ public class ChatRequestDTO {
     public void setMessages(List<Message> messages) {
         this.messages = messages;
     }
+
+    public String getGroupId() { return groupId; }
+    public void setGroupId(String groupId) { this.groupId = groupId; }
 }
