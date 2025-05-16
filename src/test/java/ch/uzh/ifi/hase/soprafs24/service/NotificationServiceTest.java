@@ -25,6 +25,7 @@ import java.beans.Transient;
 import java.util.List;
 import java.util.Optional;
 import java.lang.Thread;
+import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -91,5 +92,50 @@ public class NotificationServiceTest {
         assertEquals("testExoplanet", savedNotifications.get(2).getPlanetName());
         assertNotNull(savedNotifications.get(2).getCreatedAt());
         assertTrue(!savedNotifications.get(2).isSeen());
+    }
+
+    @Test
+    public void getAndCheckIfSeenNotifications_validInputs_success() {
+
+        User testUser1 = new User();
+        testUser1.setId("1");
+
+        Notification note1 = new Notification();
+        note1.setUserId("1");
+        note1.setExoplanetId("planet1");
+        Notification note2 = new Notification();
+        note2.setUserId("1");
+        note2.setExoplanetId("planet2");
+        Notification note3 = new Notification();
+        note3.setUserId("1");
+        note3.setExoplanetId("planet3");
+
+        List<Notification> savedNotifications = List.of(note1, note2, note3);
+        when(notificationRepository.findByUserId("1")).thenReturn(savedNotifications);
+
+        final List<Notification> allNotifications = notificationService.getAllNotificationsForUser("1");
+
+        assertEquals("planet1", allNotifications.get(0).getExoplanetId()); // Just to check if parameters work
+        assertEquals("planet2", allNotifications.get(1).getExoplanetId());
+        assertEquals("planet3", allNotifications.get(2).getExoplanetId());
+        assertTrue(!allNotifications.get(0).isSeen()); // No notification is seen
+        assertTrue(!allNotifications.get(1).isSeen());
+        assertTrue(!allNotifications.get(2).isSeen());
+
+        notificationService.markSingleNotificationAsSeen("1", "planet1"); // mark one as seen
+
+        when(notificationRepository.saveAll(anyList())).thenReturn(Collections.emptyList());
+        when(notificationRepository.findByUserIdAndSeenFalse("1")).thenReturn(List.of(note2, note3));
+        List<Notification> unseenNotifications = notificationService.getUnseenNotificationsForUser("1"); // and then get all others
+
+        assertEquals(2, unseenNotifications.size());
+        assertEquals("planet2", unseenNotifications.get(0).getExoplanetId());
+        assertEquals("planet3", unseenNotifications.get(1).getExoplanetId());
+
+        notificationService.markNotificationsAsSeen("1"); // mark all as seen
+
+        when(notificationRepository.findByUserIdAndSeenFalse("1")).thenReturn(Collections.emptyList());
+        List<Notification> unseenNotifications2 = notificationService.getUnseenNotificationsForUser("1"); // and then get all others
+        assertEquals(0, unseenNotifications2.size());
     }
 }
