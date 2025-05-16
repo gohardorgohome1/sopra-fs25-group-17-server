@@ -22,7 +22,9 @@ public class NotificationController {
 
     @Autowired
     private NotificationService notificationService;
+    @Autowired
     private UserService userService;
+    @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
     // Fetch unseen notifications for a user --> this marks them as seen.
