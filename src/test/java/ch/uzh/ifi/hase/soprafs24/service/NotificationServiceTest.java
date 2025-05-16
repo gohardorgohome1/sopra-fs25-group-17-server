@@ -30,7 +30,23 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.AsyncConfigurer;
+import org.springframework.core.task.SyncTaskExecutor;
+import java.util.concurrent.Executor;
+import org.springframework.scheduling.annotation.EnableAsync;
+
+@Configuration // Test coverage would not be correct without this class due to asyn method in NotificationService.java
+@EnableAsync
+class TestAsyncConfig implements AsyncConfigurer {
+    @Override
+    public Executor getAsyncExecutor() {
+        return new SyncTaskExecutor(); // Executes tasks synchronously
+    }
+}
+
+
+@SpringBootTest(classes = {NotificationService.class, TestAsyncConfig.class})
 public class NotificationServiceTest {
 
     @MockBean
@@ -61,11 +77,6 @@ public class NotificationServiceTest {
         ArgumentCaptor<List<Notification>> captor = ArgumentCaptor.forClass(List.class);
 
         notificationService.createNotificationsForAllUsers("exo1", "testUser", "testExoplanet", "1");
-        try {
-            Thread.sleep(300); // pause for 300 ms since createNotificationsForAllUsers is async
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
 
         verify(notificationRepository, times(1)).saveAll(captor.capture());
         List<Notification> savedNotifications = captor.getValue();
