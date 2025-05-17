@@ -11,6 +11,7 @@ import org.mockito.ArgumentCaptor;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.beans.Transient;
 import java.io.ByteArrayInputStream;
 import java.util.*;
 
@@ -23,6 +24,9 @@ public class PhotometricCurveServiceTest {
     private PhotometricCurveService service;
     private PhotometricCurveRepository curveRepository;
     private ExoplanetRepository exoplanetRepository;
+
+    private HttpClient mockClient;
+    private HttpResponse<String> mockResponse;
 
     @BeforeEach
     public void setup() {
@@ -124,6 +128,23 @@ public class PhotometricCurveServiceTest {
         assertNotNull(result.getDataPoints());
         assertEquals(2, result.getDataPoints().size());
         assertTrue(result.getMetadata().containsKey("Observer"));
+    }
+
+    @Test
+    public void fetchFromAPI_validInput_success() {
+
+        mockClient = mock(HttpClient.class);
+        mockResponse = mock(HttpResponse.class);
+        when(mockResponse.body()).thenReturn(
+                        "[Some response body]"
+        );
+
+        when(mockClient.send(any(HttpRequest.class), any(HttpResponse.BodyHandler.class)))
+            .thenReturn(mockResponse);
+        when(mockResponse.statusCode()).thenReturn(200);
+
+        final Map<String, Float> fetchedData = fetchExoplanetDataFromAPI("TrES-3 b");
+        assertTrue(!fetchedData.isEmpty());
     }
 
 
