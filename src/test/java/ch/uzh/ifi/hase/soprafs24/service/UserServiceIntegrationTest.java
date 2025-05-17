@@ -54,4 +54,36 @@ public class UserServiceIntegrationTest {
 
         assertThrows(ResponseStatusException.class, () -> userService.createUser(user2));
     }
+
+    @Test
+    public void changeUsername_validInputs_success() {
+        User user = new User();
+        user.setUsername("testuser");
+
+        User createdUser = userService.createUser(user);
+
+        userService.setUsername(createdUser.getId(), "testuserChanged");
+
+        User updatedUser = userService.getUserById(createdUser.getId());
+
+        assertNotNull(updatedUser.getId());
+        assertEquals("testuserChanged", updatedUser.getUsername());
+        assertEquals(UserStatus.ONLINE, updatedUser.getStatus());
+        assertNotNull(updatedUser.getToken());
+    }
+
+    @Test
+    public void changeUsername_duplicateUsername_throwsException() {
+        User user1 = new User();
+        user1.setUsername("dupeUser");
+
+        userService.createUser(user1);
+
+        User user2 = new User();
+        user2.setUsername("anotherUser");
+
+        userService.createUser(user2);
+
+        assertThrows(ResponseStatusException.class, () -> userService.setUsername(user2.getId(), "dupeUser"));
+    }
 }
