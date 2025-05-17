@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.ChatMessageOpenAI;
 import ch.uzh.ifi.hase.soprafs24.repository.ChatMessageOpenAIRepository;
+import ch.uzh.ifi.hase.soprafs24.repository.ChatGroupRepository;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.ChatRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -15,6 +16,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.context.annotation.Bean;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Import;
 
 import java.util.*;
 
@@ -27,6 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(ChatMessageOpenAIController.class)
+@Import(ChatMessageOpenAIControllerTest.TestConfig.class)
 public class ChatMessageOpenAIControllerTest {
 
     @Autowired
@@ -35,10 +40,20 @@ public class ChatMessageOpenAIControllerTest {
     @MockBean
     private ChatMessageOpenAIRepository chatRepo;
 
+    @MockBean
+    private ChatGroupRepository chatGroupRepository;
+
     @Autowired
     private ObjectMapper objectMapper;
 
-    /* 
+    @TestConfiguration
+    static class TestConfig {
+        @Bean
+        public RestTemplate restTemplate() {
+            return new RestTemplate();
+        }
+    }
+    
     @Test
     void testGetChatHistory_returnsSortedMessages() throws Exception {
         ChatMessageOpenAI msg1 = new ChatMessageOpenAI();
@@ -55,10 +70,9 @@ public class ChatMessageOpenAIControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].content").value("First"))
                 .andExpect(jsonPath("$[1].content").value("Second"));
-    } */
+    }
     
-    /*
-    @Disabled("Disabled due to missing or invalid OpenAI API key")
+    //@Disabled("Disabled due to missing or invalid OpenAI API key")
     @Test
     void chatWithOpenAI_returnsAssistantMessage() throws Exception {
         // Arrange test data
@@ -102,10 +116,9 @@ public class ChatMessageOpenAIControllerTest {
         List<ChatMessageOpenAI> savedMessages = messageCaptor.getAllValues();
         assertThat(savedMessages.get(0).getContent()).isEqualTo("Hello!");
         assertThat(savedMessages.get(1).getContent()).isEqualTo("Hi there!");
-    } */
+    }
 
-    /* 
-    @Disabled("Disabled due to missing or invalid OpenAI API key")
+    //@Disabled("Disabled due to missing or invalid OpenAI API key")
     @Test
     void chatWithOpenAI_handlesApiFailureGracefully() throws Exception {
         // Arrange input
@@ -126,6 +139,5 @@ public class ChatMessageOpenAIControllerTest {
                 .content(objectMapper.writeValueAsString(chatRequest)))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.reply").value(org.hamcrest.Matchers.containsString("Error calling OpenAI")));
-    } */
-
+    }
 }

@@ -21,12 +21,17 @@ public class ChatMessageOpenAIController {
     private static final String OPENAI_API_KEY = System.getenv("OPENAI_API_KEY");
     private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 
+    private final RestTemplate restTemplate;
+
+    public ChatMessageOpenAIController(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
+
     @Autowired
     private ChatMessageOpenAIRepository chatRepo;
 
     @PostMapping("/helper")
     public ResponseEntity<ChatResponseDTO> correctExoplanetName(@RequestBody String exoplanetName) {
-        RestTemplate restTemplate = new RestTemplate();
 
 
         String userPrompt = String.format(
@@ -73,7 +78,6 @@ public class ChatMessageOpenAIController {
 
     @PostMapping("/chat")
     public ResponseEntity<ChatResponseDTO> chatWithOpenAI(@RequestBody ChatRequestDTO chatRequest) {
-        RestTemplate restTemplate = new RestTemplate();
 
         for (ChatRequestDTO.Message msg : chatRequest.getMessages()) {
             ChatMessageOpenAI userMsg = new ChatMessageOpenAI();
