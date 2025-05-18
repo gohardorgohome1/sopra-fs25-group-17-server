@@ -7,10 +7,14 @@ import ch.uzh.ifi.hase.soprafs24.service.ExoplanetService;
 import ch.uzh.ifi.hase.soprafs24.repository.ExoplanetRepository;
 import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs24.service.UserService;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.CommentPostDTO;
+import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.entity.Exoplanet;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -24,6 +28,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -33,16 +39,19 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
+import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 
 @WebMvcTest(ExoplanetController.class)
 public class ExoplanetControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
+
+  @Autowired
+  private ObjectMapper objectMapper;
 
   @MockBean
   private ExoplanetService exoplanetService;
@@ -125,6 +134,43 @@ public class ExoplanetControllerTest {
       .param("order", "dsc") // desc spelled incorrectly
       .contentType(MediaType.APPLICATION_JSON))
         .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  public void whenPostComment_thenUpdateExoplanetAndInformUsers() throws Exception {
+
+    CommentPostDTO commentDTO = new CommentPostDTO();
+    commentDTO.setUserId("user1");
+    commentDTO.setMessage("Nice Discovery!");
+
+    Exoplanet exoplanet = new Exoplanet();
+    exoplanet.setId("exo1");
+    exoplanet.setPlanetName("TrES-3 b");
+    exoplanet.setOwnerId("user2");
+
+    User user = new User();
+    user.setId("user1");
+    user.setUsername("some_user");
+
+    when(userService.getUserById("user1")).thenReturn(user);
+    when(exoplanetRepository.findById("exo1")).thenReturn(Optional.of(exoplanet));
+
+    mockMvc.perform(post("/exoplanets/{id}/comments", "exo1")
+      .contentType(MediaType.APPLICATION_JSON)
+      .content(objectMapper.writeValueAsString(commentDTO)))
+        .andExpect(status().isCreated());
+
+    verify(exoplanetService).addComment(eq("exo1"), any(CommentPostDTO.class));
+
+    ArgumentCaptor<Map<String, Object>> payloadCaptor = ArgumentCaptor.forClass(Map.class);
+    verify(messagingTemplate).convertAndSend(eq("/topic/comments"), any(Map.class));
+    verify(messagingTemplate).convertAndSend(eq("/topic/comments/exo1"), payloadCaptor.capture());
+
+    Map<String, Object> payload = payloadCaptor.getValue();
+    assertEquals("some_user", payload.get("commenterUsername"));
+    assertEquals("TrES-3 b", payload.get("planetName"));
+    assertEquals("exo1", payload.get("exoplanetId"));
+    assertEquals("user2", payload.get("ownerId"));
   }
 
   /**
