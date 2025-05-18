@@ -1,11 +1,18 @@
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.Notification;
+import ch.uzh.ifi.hase.soprafs24.entity.User;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.NudgeRequestDTO;
 import ch.uzh.ifi.hase.soprafs24.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ch.uzh.ifi.hase.soprafs24.service.UserService;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +22,10 @@ public class NotificationController {
 
     @Autowired
     private NotificationService notificationService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     // Fetch unseen notifications for a user --> this marks them as seen.
     @GetMapping
@@ -43,6 +54,21 @@ public class NotificationController {
 
         notificationService.markSingleNotificationAsSeen(userId, exoplanetId);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/nudge")
+    @ResponseStatus(HttpStatus.OK)
+    public void sendNudge(@RequestBody NudgeRequestDTO dto) {
+        User fromUser = userService.getUserById(dto.getFromUserId());
+        User toUser = userService.getUserById(dto.getToUserId());
+
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("type", "nudge");
+        payload.put("fromUsername", fromUser.getUsername());
+        payload.put("fromUserId", fromUser.getId());
+
+        // Each user subscribes to their own topic: /user/{userId}/queue/notifications
+        messagingTemplate.convertAndSend("/user/" + toUser.getId() + "/queue/notifications", payload);
     }
 
 }
