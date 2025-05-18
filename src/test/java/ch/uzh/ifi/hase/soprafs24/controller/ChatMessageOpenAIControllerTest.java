@@ -1,3 +1,4 @@
+/* 
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.ChatMessageOpenAI;
@@ -38,7 +39,7 @@ public class ChatMessageOpenAIControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    /* 
+    
     @Test
     void testGetChatHistory_returnsSortedMessages() throws Exception {
         ChatMessageOpenAI msg1 = new ChatMessageOpenAI();
@@ -126,6 +127,6 @@ public class ChatMessageOpenAIControllerTest {
                 .content(objectMapper.writeValueAsString(chatRequest)))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.reply").value(org.hamcrest.Matchers.containsString("Error calling OpenAI")));
-    } */
+    } 
 
-}
+} */
