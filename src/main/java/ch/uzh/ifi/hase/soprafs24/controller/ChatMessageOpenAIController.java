@@ -91,6 +91,12 @@ public ResponseEntity<ChatResponseDTO> chatWithOpenAI(@RequestBody ChatRequestDT
 
 
     if (!chatRequest.isAiEnabled()) {
+        // ✅ Notify frontend clients even if AI is not enabled
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("type", "chat-update");
+        payload.put("groupId", chatRequest.getGroupId());
+
+        messagingTemplate.convertAndSend("/topic/ai-chat/" + chatRequest.getGroupId(), payload);
         return ResponseEntity.ok(new ChatResponseDTO(null)); 
     }
 
