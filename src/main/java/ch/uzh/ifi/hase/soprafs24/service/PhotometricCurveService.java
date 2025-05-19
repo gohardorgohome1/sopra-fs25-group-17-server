@@ -35,7 +35,7 @@ public class PhotometricCurveService {
     private final ExoplanetRepository exoplanetRepository;
 
     private static final String TAP_API_URL = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync";
-    private static final HttpClient client = HttpClient.newHttpClient();
+    private final HttpClient client;
     private static final float SOLAR_RADIUS_TO_EARTH = 109f;
     private static final float SURFACE_TEMP_EARTH = 288f;
 
@@ -45,9 +45,16 @@ public class PhotometricCurveService {
     private static final float ESI_TW = 5.58f;
 
     public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
-                                    ExoplanetRepository exoplanetRepository) {
+                                    ExoplanetRepository exoplanetRepository,
+                                    HttpClient client) {
         this.photometricCurveRepository = photometricCurveRepository;
         this.exoplanetRepository = exoplanetRepository;
+        this.client = client;
+    }
+
+    public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
+                                    ExoplanetRepository exoplanetRepository) {
+        this(photometricCurveRepository, exoplanetRepository, HttpClient.newHttpClient());
     }
 
     public PhotometricCurve processAndSavePhotometricCurve(MultipartFile file, String hostStar, String planetName, String ownerId) throws IOException {
@@ -187,7 +194,7 @@ public class PhotometricCurveService {
     }
 
     
-    private Map<String, Float> parseVOTableData(String xmlResponse) {
+    Map<String, Float> parseVOTableData(String xmlResponse) { // Removed private making it package-private for testing purposes
         Map<String, Float> data = new HashMap<>();
         try {
             System.out.println("[VOT Parse] Starting XML Parsing...");
