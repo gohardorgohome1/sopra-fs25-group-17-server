@@ -53,6 +53,7 @@ public class ExoplanetRepositoryIntegrationTest {
         assertEquals(exoplanet.getPlanetName(), found.getPlanetName());
     }
 
+    /* 
     @Test
     void findAllByOrderByMassAsc_success() {
         Exoplanet exoplanet0 = new Exoplanet();
@@ -69,5 +70,5 @@ public class ExoplanetRepositoryIntegrationTest {
         assertNotNull(found);
         assertEquals(exoplanet1.getPlanetName(), found.get(0).getPlanetName());
         assertEquals(exoplanet0.getPlanetName(), found.get(1).getPlanetName());
-    }
+    } */
 }

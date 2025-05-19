@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-
 import java.util.*;
 
 @RestController
@@ -72,64 +71,69 @@ public class ChatMessageOpenAIController {
     
 
     @PostMapping("/chat")
-    public ResponseEntity<ChatResponseDTO> chatWithOpenAI(@RequestBody ChatRequestDTO chatRequest) {
-        RestTemplate restTemplate = new RestTemplate();
+public ResponseEntity<ChatResponseDTO> chatWithOpenAI(@RequestBody ChatRequestDTO chatRequest) {
+    RestTemplate restTemplate = new RestTemplate();
 
-        for (ChatRequestDTO.Message msg : chatRequest.getMessages()) {
-            ChatMessageOpenAI userMsg = new ChatMessageOpenAI();
-            userMsg.setUserId(chatRequest.getUserId());
-            userMsg.setSenderName(chatRequest.getUsername());
-            userMsg.setGroupId(chatRequest.getGroupId());
-            userMsg.setRole(msg.getRole());
-            userMsg.setContent(msg.getContent());
-            userMsg.setCreatedAt(new Date());
-            chatRepo.save(userMsg);
-        }
-
-        Map<String, String> systemMessage = new HashMap<>();
-        systemMessage.put("role", "system");
-        systemMessage.put("content", "You are an exoplanet, astrophysicist and cosmology expert. Your task is to answer questions about science and respond accurately. However you must not respond to questions that does not have to do anything with exoplanets, physics, space or science and you should indicate the user that you are a customized exoplanets expert and you must answer only questions about that. Do not be too long wth your answers.");
-
-        List<Map<String, String>> openAIMessages = new ArrayList<>();
-        openAIMessages.add(systemMessage);
-
-        for (ChatRequestDTO.Message msg : chatRequest.getMessages()) {
-            Map<String, String> message = new HashMap<>();
-            message.put("role", msg.getRole());
-            message.put("content", msg.getContent());
-            openAIMessages.add(message);
-        }
-
-        Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("model", "gpt-4o-mini-2024-07-18");
-        requestBody.put("messages", openAIMessages);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(OPENAI_API_KEY);
-
-        HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
-
-        try {
-            ResponseEntity<Map> response = restTemplate.postForEntity(OPENAI_API_URL, request, Map.class);
-            List<Map<String, Object>> choices = (List<Map<String, Object>>) response.getBody().get("choices");
-            Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
-            String reply = (String) message.get("content");
-
-            ChatMessageOpenAI assistantMsg = new ChatMessageOpenAI();
-            assistantMsg.setUserId(chatRequest.getUserId());
-            assistantMsg.setGroupId(chatRequest.getGroupId());
-            assistantMsg.setRole("assistant");
-            assistantMsg.setContent(reply);
-            assistantMsg.setCreatedAt(new Date());
-            chatRepo.save(assistantMsg);
-
-            return ResponseEntity.ok(new ChatResponseDTO(reply));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ChatResponseDTO("Error calling OpenAI: " + e.getMessage()));
-        }
+    for (ChatRequestDTO.Message msg : chatRequest.getMessages()) {
+        ChatMessageOpenAI userMsg = new ChatMessageOpenAI();
+        userMsg.setUserId(chatRequest.getUserId());
+        userMsg.setSenderName(chatRequest.getUsername());
+        userMsg.setGroupId(chatRequest.getGroupId());
+        userMsg.setRole(msg.getRole());
+        userMsg.setContent(msg.getContent());
+        userMsg.setCreatedAt(new Date());
+        chatRepo.save(userMsg);
     }
+
+
+    if (!chatRequest.isAiEnabled()) {
+        return ResponseEntity.ok(new ChatResponseDTO(null)); 
+    }
+
+    Map<String, String> systemMessage = new HashMap<>();
+    systemMessage.put("role", "system");
+    systemMessage.put("content", "You are an exoplanet, astrophysicist and cosmology expert. Your task is to answer questions about science and respond accurately. However you must not respond to questions that does not have to do anything with exoplanets, physics, space or science and you should indicate the user that you are a customized exoplanets expert and you must answer only questions about that. Do not be too long wth your answers.");
+
+    List<Map<String, String>> openAIMessages = new ArrayList<>();
+    openAIMessages.add(systemMessage);
+
+    for (ChatRequestDTO.Message msg : chatRequest.getMessages()) {
+        Map<String, String> message = new HashMap<>();
+        message.put("role", msg.getRole());
+        message.put("content", msg.getContent());
+        openAIMessages.add(message);
+    }
+
+    Map<String, Object> requestBody = new HashMap<>();
+    requestBody.put("model", "gpt-4o-mini-2024-07-18");
+    requestBody.put("messages", openAIMessages);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.setBearerAuth(OPENAI_API_KEY);
+
+    HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
+
+    try {
+        ResponseEntity<Map> response = restTemplate.postForEntity(OPENAI_API_URL, request, Map.class);
+        List<Map<String, Object>> choices = (List<Map<String, Object>>) response.getBody().get("choices");
+        Map<String, Object> message = (Map<String, Object>) choices.get(0).get("message");
+        String reply = (String) message.get("content");
+
+        ChatMessageOpenAI assistantMsg = new ChatMessageOpenAI();
+        assistantMsg.setUserId(chatRequest.getUserId());
+        assistantMsg.setGroupId(chatRequest.getGroupId());
+        assistantMsg.setRole("assistant");
+        assistantMsg.setContent(reply);
+        assistantMsg.setCreatedAt(new Date());
+        chatRepo.save(assistantMsg);
+
+        return ResponseEntity.ok(new ChatResponseDTO(reply));
+    } catch (Exception e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new ChatResponseDTO("Error calling OpenAI: " + e.getMessage()));
+    }
+}
 
 
     @GetMapping("/chat/history")
