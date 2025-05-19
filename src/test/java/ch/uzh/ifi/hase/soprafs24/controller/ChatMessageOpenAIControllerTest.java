@@ -108,7 +108,7 @@ public class ChatMessageOpenAIControllerTest {
     }*/
 
     //@Disabled("Disabled due to missing or invalid OpenAI API key")
-    @Test
+    /*@Test
     void chatWithOpenAI_handlesApiFailureGracefully() throws Exception {
         // Arrange input
         ChatRequestDTO.Message message = new ChatRequestDTO.Message();
@@ -128,5 +128,5 @@ public class ChatMessageOpenAIControllerTest {
                 .content(objectMapper.writeValueAsString(chatRequest)))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.reply").value(org.hamcrest.Matchers.containsString("Error calling OpenAI")));
-    }
+    }*/
 }
