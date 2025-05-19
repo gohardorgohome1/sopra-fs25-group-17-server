@@ -52,6 +52,11 @@ public class PhotometricCurveService {
         this.client = client;
     }
 
+    public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
+                                    ExoplanetRepository exoplanetRepository) {
+        this(photometricCurveRepository, exoplanetRepository, HttpClient.newHttpClient());
+    }
+
     public PhotometricCurve processAndSavePhotometricCurve(MultipartFile file, String hostStar, String planetName, String ownerId) throws IOException {
         List<DataPoint> dataPoints = new ArrayList<>();
         Map<String, String> metadata = new HashMap<>();
