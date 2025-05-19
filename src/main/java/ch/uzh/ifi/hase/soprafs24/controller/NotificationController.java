@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs24.controller;
 import ch.uzh.ifi.hase.soprafs24.entity.Notification;
 import ch.uzh.ifi.hase.soprafs24.entity.User;
 import ch.uzh.ifi.hase.soprafs24.rest.dto.NudgeRequestDTO;
+import ch.uzh.ifi.hase.soprafs24.rest.dto.ChatInviteDTO;
 import ch.uzh.ifi.hase.soprafs24.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -70,5 +71,24 @@ public class NotificationController {
         // Each user subscribes to their own topic: /user/{userId}/queue/notifications
         messagingTemplate.convertAndSend("/user/" + toUser.getId() + "/queue/notifications", payload);
     }
+
+    @PostMapping("/chat-invite")
+    @ResponseStatus(HttpStatus.OK)
+    public void sendChatInviteNotification(@RequestBody ChatInviteDTO dto) {
+        User fromUser = userService.getUserById(dto.getFromUserId());
+
+        for (String toUserId : dto.getToUserIds()) {
+            User toUser = userService.getUserById(toUserId);
+
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("type", "chat-invite");
+            payload.put("fromUsername", fromUser.getUsername());
+            payload.put("fromUserId", fromUser.getId());
+
+            // Each user subscribes to their own topic
+            messagingTemplate.convertAndSend("/user/" + toUser.getId() + "/queue/notifications", payload);
+        }
+    }
+
 
 }
