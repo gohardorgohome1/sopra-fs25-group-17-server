@@ -29,6 +29,8 @@ public class ChatRequestDTO {
     private String username; 
     private String groupId;
     private List<Message> messages;
+    private boolean aiEnabled;
+
 
     public String getUserId() {
         return userId;
@@ -52,6 +54,14 @@ public class ChatRequestDTO {
 
     public void setMessages(List<Message> messages) {
         this.messages = messages;
+    }
+
+        public boolean isAiEnabled() {
+        return aiEnabled;
+    }
+
+    public void setAiEnabled(boolean aiEnabled) {
+        this.aiEnabled = aiEnabled;
     }
 
     public String getGroupId() { return groupId; }
