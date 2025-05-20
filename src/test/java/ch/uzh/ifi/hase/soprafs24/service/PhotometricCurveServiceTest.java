@@ -35,9 +35,9 @@ public class PhotometricCurveServiceTest {
     public void setup() {
         curveRepository = mock(PhotometricCurveRepository.class);
         exoplanetRepository = mock(ExoplanetRepository.class);
-        //mockClient = mock(HttpClient.class);
-        //service = new PhotometricCurveService(curveRepository, exoplanetRepository, mockClient);
-        service = new PhotometricCurveService(curveRepository, exoplanetRepository);
+        mockClient = mock(HttpClient.class);
+        service = new PhotometricCurveService(curveRepository, exoplanetRepository, mockClient);
+        //service = new PhotometricCurveService(curveRepository, exoplanetRepository);
     }
 
     @Test

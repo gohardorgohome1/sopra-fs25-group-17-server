@@ -37,7 +37,8 @@ public class PhotometricCurveService {
     private final ExoplanetRepository exoplanetRepository;
 
     private static final String TAP_API_URL = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync";
-    private final HttpClient client = HttpClient.newHttpClient();
+    //private final HttpClient client = HttpClient.newHttpClient();
+    private final HttpClient client;
     private static final float SOLAR_RADIUS_TO_EARTH = 109f;
     private static final float SURFACE_TEMP_EARTH = 288f;
 
@@ -46,24 +47,26 @@ public class PhotometricCurveService {
     private static final float ESI_VW = 0.70f;
     private static final float ESI_TW = 5.58f;
 
-
-    public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
+    /*
+     public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
                                     ExoplanetRepository exoplanetRepository) {
         this.photometricCurveRepository = photometricCurveRepository;
         this.exoplanetRepository = exoplanetRepository;
     }
 
+     */
     
-    /*
+
+    
      
     public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
                                     ExoplanetRepository exoplanetRepository,
                                     HttpClient client) {
         this.photometricCurveRepository = photometricCurveRepository;
         this.exoplanetRepository = exoplanetRepository;
-        this.client = HttpClient.newHttpClient();
+        this.client = client;
     }
-    
+    /*
      public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
                                     ExoplanetRepository exoplanetRepository) {
         this(photometricCurveRepository, exoplanetRepository, HttpClient.newHttpClient());
