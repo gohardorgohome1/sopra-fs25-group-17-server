@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @RestController
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "ch.uzh.ifi.hase.soprafs24")
 @EnableAsync
 public class Application {
 
