@@ -6,7 +6,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.DataPoint;
 import ch.uzh.ifi.hase.soprafs24.repository.PhotometricCurveRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.ExoplanetRepository;
 
-import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
