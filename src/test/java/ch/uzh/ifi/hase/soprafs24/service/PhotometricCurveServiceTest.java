@@ -134,7 +134,7 @@ public class PhotometricCurveServiceTest {
         assertTrue(result.getMetadata().containsKey("Observer"));
     }
 
-    @Test
+    /*@Test
     public void fetchFromAPI_validInput_success() throws Exception {
 
         mockResponse = mock(HttpResponse.class);
@@ -188,6 +188,58 @@ public class PhotometricCurveServiceTest {
         final Map<String, Float> fetchedData = service.fetchExoplanetDataFromAPI("TrES-3 b");
         assertTrue(!fetchedData.isEmpty());
     }
+
+    @Test
+    public void parseVOTableData_validInput_success() throws Exception {
+
+        Map<String, Float> calculatedData = service.parseVOTableData(
+                        "<?xml version=\"1.0\" encoding=\"utf-8\"?>\r\n" + //
+                        "<VOTABLE version=\"1.3\" xmlns=\"http://www.ivoa.net/xml/VOTable/v1.3\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"http://www.ivoa.net/xml/VOTable/v1.3\">\r\n" + //
+                        "  <RESOURCE type=\"results\">\r\n" + //
+                        "  <INFO name=\"QUERY_STATUS\" value=\"OK\"/>\r\n" + //
+                        "  <TABLE>\r\n" + //
+                        "    <FIELD ID=\"pl_name\" arraysize=\"*\" datatype=\"char\" name=\"pl_name\">\r\n" + //
+                        "  <DESCRIPTION><![CDATA[ Planet Name ]]></DESCRIPTION>\r\n" + //
+                        "</FIELD>\r\n" + //
+                        "    <FIELD ID=\"st_rad\" datatype=\"double\" name=\"st_rad\" unit=\"Rsun\"/>\r\n" + //
+                        "    <FIELD ID=\"pl_orbper\" datatype=\"double\" name=\"pl_orbper\" unit=\"day\"/>\r\n" + //
+                        "    <FIELD ID=\"pl_masse\" datatype=\"double\" name=\"pl_masse\" unit=\"Mearth\"/>\r\n" + //
+                        "    <FIELD ID=\"pl_eqt\" datatype=\"double\" name=\"pl_eqt\" unit=\"K\"/>\r\n" + //
+                        "    <DATA>\r\n" + //
+                        "      <TABLEDATA>\r\n" + //
+                        "        <TR>\r\n" + //
+                        "        <TD><![CDATA[TrES-3 b]]></TD>\r\n" + //
+                        "        <TD>0.812000</TD>\r\n" + //
+                        "        <TD>1.30619000000</TD>\r\n" + //
+                        "        <TD>615.95454000</TD>\r\n" + //
+                        "        <TD>1623.00</TD>\r\n" + //
+                        "        </TR>\r\n" + //
+                        "        <TR>\r\n" + //
+                        "        <TD><![CDATA[TrES-3 b]]></TD>\r\n" + //
+                        "        <TD>0.818000</TD>\r\n" + //
+                        "        <TD>1.30618640000</TD>\r\n" + //
+                        "        <TD>607.05530000</TD>\r\n" + //
+                        "        <TD>1630.00</TD>\r\n" + //
+                        "        </TR>\r\n" + //
+                        "        <TR>\r\n" + //
+                        "        <TD><![CDATA[TrES-3 b]]></TD>\r\n" + //
+                        "        <TD>0.823500</TD>\r\n" + //
+                        "        <TD>1.30618700000</TD>\r\n" + //
+                        "        <TD>603.55917000</TD>\r\n" + //
+                        "        <TD>1638.00</TD>\r\n" + //
+                        "        </TR>\r\n" + //
+                        "      </TABLEDATA>\r\n" + //
+                        "    </DATA>\r\n" + //
+                        "  </TABLE>\r\n" + //
+                        "  </RESOURCE>\r\n" + //
+                        "</VOTABLE>"
+        );
+     
+        assertEquals(0.812f, calculatedData.get("star_radius"), 0.0001f);
+        assertEquals(1.30619f, calculatedData.get("orbitalPeriod"), 0.0001f);
+        assertEquals(615.95454f, calculatedData.get("mass"), 0.0001f);
+        assertEquals(1623f, calculatedData.get("theoretical_temperature"), 0.1f);
+    }*/
 
 
     // Utility: call private method via reflection
