@@ -35,10 +35,11 @@ public class PhotometricCurveService {
 
     private final PhotometricCurveRepository photometricCurveRepository;
     private final ExoplanetRepository exoplanetRepository;
+    private final HttpClient client;
 
     private static final String TAP_API_URL = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync";
     // private static final HttpClient client = HttpClient.newHttpClient();
-    private final HttpClient client;
+    
     private static final float SOLAR_RADIUS_TO_EARTH = 109f;
     private static final float SURFACE_TEMP_EARTH = 288f;
 
