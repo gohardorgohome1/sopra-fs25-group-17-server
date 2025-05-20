@@ -9,6 +9,7 @@ import ch.uzh.ifi.hase.soprafs24.rest.dto.ChatResponseDTO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 import java.util.*;
@@ -22,6 +23,9 @@ public class ChatMessageOpenAIController {
 
     @Autowired
     private ChatMessageOpenAIRepository chatRepo;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/helper")
     public ResponseEntity<ChatResponseDTO> correctExoplanetName(@RequestBody String exoplanetName) {
@@ -87,6 +91,12 @@ public ResponseEntity<ChatResponseDTO> chatWithOpenAI(@RequestBody ChatRequestDT
 
 
     if (!chatRequest.isAiEnabled()) {
+        // ✅ Notify frontend clients even if AI is not enabled
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("type", "chat-update");
+        payload.put("groupId", chatRequest.getGroupId());
+
+        messagingTemplate.convertAndSend("/topic/ai-chat/" + chatRequest.getGroupId(), payload);
         return ResponseEntity.ok(new ChatResponseDTO(null)); 
     }
 
@@ -127,6 +137,13 @@ public ResponseEntity<ChatResponseDTO> chatWithOpenAI(@RequestBody ChatRequestDT
         assistantMsg.setContent(reply);
         assistantMsg.setCreatedAt(new Date());
         chatRepo.save(assistantMsg);
+
+        // ✅ Notify frontend clients that a new message was added to this group
+        Map<String, Object> payload = new HashMap<>();
+        payload.put("type", "chat-update");
+        payload.put("groupId", chatRequest.getGroupId());
+
+        messagingTemplate.convertAndSend("/topic/ai-chat/" + chatRequest.getGroupId(), payload);
 
         return ResponseEntity.ok(new ChatResponseDTO(reply));
     } catch (Exception e) {
