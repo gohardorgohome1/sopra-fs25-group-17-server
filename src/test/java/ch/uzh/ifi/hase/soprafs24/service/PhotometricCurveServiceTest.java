@@ -17,7 +17,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-
+// some comments
 public class PhotometricCurveServiceTest {
 
     private PhotometricCurveService service;
