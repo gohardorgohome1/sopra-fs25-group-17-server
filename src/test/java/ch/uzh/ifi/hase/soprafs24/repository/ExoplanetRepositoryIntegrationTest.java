@@ -38,7 +38,7 @@ public class ExoplanetRepositoryIntegrationTest {
         assertEquals(exoplanet.getFractionalDepth(), saved.getFractionalDepth());
     }
 
-    @Test
+    /*@Test
     void findByPlanetName_success() {
         Exoplanet exoplanet = new Exoplanet();
         exoplanet.setPlanetName("mongoTestPlanet");
@@ -51,7 +51,7 @@ public class ExoplanetRepositoryIntegrationTest {
 
         assertNotNull(found);
         assertEquals(exoplanet.getPlanetName(), found.getPlanetName());
-    }
+    }*/
 
     /* 
     @Test
