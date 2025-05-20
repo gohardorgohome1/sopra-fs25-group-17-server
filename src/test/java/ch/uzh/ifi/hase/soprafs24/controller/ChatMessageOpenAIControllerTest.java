@@ -62,7 +62,7 @@ public class ChatMessageOpenAIControllerTest {
     }
     
     //@Disabled("Disabled due to missing or invalid OpenAI API key")
-    @Disabled("Disabled due to mocking or restTemplate not working")
+    /*@Disabled("Disabled due to mocking or restTemplate not working")
     @Test
     void chatWithOpenAI_returnsAssistantMessage() throws Exception {
         // Arrange test data
@@ -106,10 +106,10 @@ public class ChatMessageOpenAIControllerTest {
         List<ChatMessageOpenAI> savedMessages = messageCaptor.getAllValues();
         assertThat(savedMessages.get(0).getContent()).isEqualTo("Hello!");
         assertThat(savedMessages.get(1).getContent()).isEqualTo("Hi there!");
-    }
+    }*/
 
     //@Disabled("Disabled due to missing or invalid OpenAI API key")
-    @Test
+    /*@Test
     void chatWithOpenAI_handlesApiFailureGracefully() throws Exception {
         // Arrange input
         ChatRequestDTO.Message message = new ChatRequestDTO.Message();
@@ -129,6 +129,5 @@ public class ChatMessageOpenAIControllerTest {
                 .content(objectMapper.writeValueAsString(chatRequest)))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.reply").value(org.hamcrest.Matchers.containsString("Error calling OpenAI")));
-    } 
-
-} */
+    }
+}*/

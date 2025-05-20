@@ -5,6 +5,9 @@ import ch.uzh.ifi.hase.soprafs24.entity.Exoplanet;
 import ch.uzh.ifi.hase.soprafs24.entity.DataPoint;
 import ch.uzh.ifi.hase.soprafs24.repository.PhotometricCurveRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.ExoplanetRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,7 +38,9 @@ public class PhotometricCurveService {
     private final ExoplanetRepository exoplanetRepository;
 
     private static final String TAP_API_URL = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync";
-    private static final HttpClient client = HttpClient.newHttpClient();
+    //private final HttpClient client = HttpClient.newHttpClient();
+    @Autowired
+    private final HttpClient client;
     private static final float SOLAR_RADIUS_TO_EARTH = 109f;
     private static final float SURFACE_TEMP_EARTH = 288f;
 
@@ -44,11 +49,34 @@ public class PhotometricCurveService {
     private static final float ESI_VW = 0.70f;
     private static final float ESI_TW = 5.58f;
 
-    public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
+    /*
+     public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
                                     ExoplanetRepository exoplanetRepository) {
         this.photometricCurveRepository = photometricCurveRepository;
         this.exoplanetRepository = exoplanetRepository;
     }
+
+     */
+    
+
+    
+     
+    public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
+                                    ExoplanetRepository exoplanetRepository,
+                                    HttpClient client) {
+        this.photometricCurveRepository = photometricCurveRepository;
+        this.exoplanetRepository = exoplanetRepository;
+        this.client = client;
+    }
+    /*
+     public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
+                                    ExoplanetRepository exoplanetRepository) {
+        this(photometricCurveRepository, exoplanetRepository, HttpClient.newHttpClient());
+    }
+
+     */
+
+    
 
     public PhotometricCurve processAndSavePhotometricCurve(MultipartFile file, String hostStar, String planetName, String ownerId) throws IOException {
         List<DataPoint> dataPoints = new ArrayList<>();
@@ -157,10 +185,20 @@ public class PhotometricCurveService {
 
             String requestBody = "query=" + URLEncoder.encode(adqlQuery, StandardCharsets.UTF_8) +
                                  "&format=votable";
+            /*
+             HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(TAP_API_URL))
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                    .build();
+
+             */
+            
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(TAP_API_URL))
                     .header("Content-Type", "application/x-www-form-urlencoded")
+                    .header("User-Agent", "Mozilla/5.0 (compatible; SopraFS25Backend/1.0; +https://sopra-fs25-group-17-server.oa.r.appspot.com/)")
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();
 
@@ -187,7 +225,7 @@ public class PhotometricCurveService {
     }
 
     
-    private Map<String, Float> parseVOTableData(String xmlResponse) {
+    Map<String, Float> parseVOTableData(String xmlResponse) { // Removed private making it package-private for testing purposes
         Map<String, Float> data = new HashMap<>();
         try {
             System.out.println("[VOT Parse] Starting XML Parsing...");
