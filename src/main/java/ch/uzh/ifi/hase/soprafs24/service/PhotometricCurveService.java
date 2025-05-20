@@ -5,6 +5,8 @@ import ch.uzh.ifi.hase.soprafs24.entity.Exoplanet;
 import ch.uzh.ifi.hase.soprafs24.entity.DataPoint;
 import ch.uzh.ifi.hase.soprafs24.repository.PhotometricCurveRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.ExoplanetRepository;
+
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -51,11 +53,14 @@ public class PhotometricCurveService {
         this.exoplanetRepository = exoplanetRepository;
         this.client = client;
     }
-
-    public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
+    /*
+      public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
                                     ExoplanetRepository exoplanetRepository) {
         this(photometricCurveRepository, exoplanetRepository, HttpClient.newHttpClient());
     }
+     
+     */
+    
 
     public PhotometricCurve processAndSavePhotometricCurve(MultipartFile file, String hostStar, String planetName, String ownerId) throws IOException {
         List<DataPoint> dataPoints = new ArrayList<>();
@@ -164,10 +169,20 @@ public class PhotometricCurveService {
 
             String requestBody = "query=" + URLEncoder.encode(adqlQuery, StandardCharsets.UTF_8) +
                                  "&format=votable";
+            /*
+             HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(TAP_API_URL))
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                    .build();
+
+             */
+            
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(URI.create(TAP_API_URL))
                     .header("Content-Type", "application/x-www-form-urlencoded")
+                    .header("User-Agent", "Mozilla/5.0 (compatible; SopraFS25Backend/1.0; +https://sopra-fs25-group-17-server.oa.r.appspot.com/)")
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();
 
