@@ -5,6 +5,8 @@ import ch.uzh.ifi.hase.soprafs24.entity.Exoplanet;
 import ch.uzh.ifi.hase.soprafs24.entity.DataPoint;
 import ch.uzh.ifi.hase.soprafs24.repository.PhotometricCurveRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.ExoplanetRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,6 +47,7 @@ public class PhotometricCurveService {
     private static final float ESI_VW = 0.70f;
     private static final float ESI_TW = 5.58f;
 
+    @Autowired
     public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
                                     ExoplanetRepository exoplanetRepository, HttpClient client) {
         this.photometricCurveRepository = photometricCurveRepository;
