@@ -6,6 +6,7 @@ import ch.uzh.ifi.hase.soprafs24.entity.DataPoint;
 import ch.uzh.ifi.hase.soprafs24.repository.PhotometricCurveRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.ExoplanetRepository;
 
+import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,7 @@ public class PhotometricCurveService {
 
     private static final String TAP_API_URL = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync";
     //private final HttpClient client = HttpClient.newHttpClient();
+    @Autowired
     private final HttpClient client;
     private static final float SOLAR_RADIUS_TO_EARTH = 109f;
     private static final float SURFACE_TEMP_EARTH = 288f;
