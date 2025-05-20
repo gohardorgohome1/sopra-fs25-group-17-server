@@ -12,6 +12,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.ByteArrayInputStream;
+import java.net.http.HttpClient;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,7 +29,9 @@ public class PhotometricCurveServiceTest {
     public void setup() {
         curveRepository = mock(PhotometricCurveRepository.class);
         exoplanetRepository = mock(ExoplanetRepository.class);
-        service = new PhotometricCurveService(curveRepository, exoplanetRepository);
+        HttpClient httpClient = mock(HttpClient.class); // <-- Add this line
+
+        service = new PhotometricCurveService(curveRepository, exoplanetRepository, httpClient); // <-- Pass it
     }
 
     @Test
