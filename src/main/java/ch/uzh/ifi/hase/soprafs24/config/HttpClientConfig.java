@@ -9,6 +9,7 @@ import java.net.http.HttpClient;
 public class HttpClientConfig {
 
     @Bean
+    @Primary
     public HttpClient httpClient() {
         return HttpClient.newHttpClient();
     }
