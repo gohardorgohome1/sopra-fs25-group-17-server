@@ -62,7 +62,7 @@ public class ChatMessageOpenAIControllerTest {
     }
     
     //@Disabled("Disabled due to missing or invalid OpenAI API key")
-    @Disabled("Disabled due to mocking or restTemplate not working")
+    /*@Disabled("Disabled due to mocking or restTemplate not working")
     @Test
     void chatWithOpenAI_returnsAssistantMessage() throws Exception {
         // Arrange test data

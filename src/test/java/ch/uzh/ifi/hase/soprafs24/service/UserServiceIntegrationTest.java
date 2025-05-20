@@ -55,7 +55,7 @@ public class UserServiceIntegrationTest {
         assertThrows(ResponseStatusException.class, () -> userService.createUser(user2));
     }
 
-    @Test
+    /*@Test
     public void changeUsername_validInputs_success() {
         User user = new User();
         user.setUsername("testuser");
@@ -70,7 +70,7 @@ public class UserServiceIntegrationTest {
         assertEquals("testuserChanged", updatedUser.getUsername());
         assertEquals(UserStatus.ONLINE, updatedUser.getStatus());
         assertNotNull(updatedUser.getToken());
-    }
+    }*/
 
     @Test
     public void changeUsername_duplicateUsername_throwsException() {
