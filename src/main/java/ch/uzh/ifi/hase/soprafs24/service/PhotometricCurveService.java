@@ -202,7 +202,7 @@ public class PhotometricCurveService {
     }
 
     
-    private Map<String, Float> parseVOTableData(String xmlResponse) {
+    Map<String, Float> parseVOTableData(String xmlResponse) {
         Map<String, Float> data = new HashMap<>();
         try {
             System.out.println("[VOT Parse] Starting XML Parsing...");
