@@ -70,7 +70,7 @@ public class ChatMessageOpenAIControllerTest {
     
     //@Disabled("Disabled due to missing or invalid OpenAI API key")
     //@Disabled("Disabled due to mocking or restTemplate not working")
-    /*@Test
+    @Test
     void chatWithOpenAI_returnsAssistantMessage() throws Exception {
         // Arrange test data
         ChatRequestDTO.Message message = new ChatRequestDTO.Message();
@@ -81,6 +81,7 @@ public class ChatMessageOpenAIControllerTest {
         chatRequest.setUserId("user1");
         chatRequest.setUsername("alex");
         chatRequest.setMessages(List.of(message));
+        chatRequest.setAiEnabled(true);
 
         // Mock OpenAI API response structure
         Map<String, Object> responseMessage = new HashMap<>();
@@ -93,9 +94,8 @@ public class ChatMessageOpenAIControllerTest {
         openAIResponse.put("choices", List.of(choice));
 
         // Mock restTemplate manually using spy (Spring won't inject here, but we simulate)
-        RestTemplate restTemplate = spy(new RestTemplate());
-        doReturn(ResponseEntity.ok(openAIResponse))
-            .when(restTemplate).postForEntity(anyString(), any(), eq(Map.class));
+        when(restTemplate.postForEntity(anyString(), any(), eq(Map.class)))
+            .thenReturn(ResponseEntity.ok(openAIResponse));
 
         // Capture saved messages
         ArgumentCaptor<ChatMessageOpenAI> messageCaptor = ArgumentCaptor.forClass(ChatMessageOpenAI.class);
@@ -113,7 +113,7 @@ public class ChatMessageOpenAIControllerTest {
         List<ChatMessageOpenAI> savedMessages = messageCaptor.getAllValues();
         assertThat(savedMessages.get(0).getContent()).isEqualTo("Hello!");
         assertThat(savedMessages.get(1).getContent()).isEqualTo("Hi there!");
-    }*/
+    }
 
     //@Disabled("Disabled due to missing or invalid OpenAI API key")
     @Test
