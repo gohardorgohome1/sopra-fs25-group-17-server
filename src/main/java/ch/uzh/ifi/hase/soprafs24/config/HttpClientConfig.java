@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
+import jakarta.annotation.PostConstruct;
 
 import java.net.http.HttpClient;
 
@@ -14,5 +15,10 @@ public class HttpClientConfig {
     @Primary
     public HttpClient httpClient() {
         return HttpClient.newHttpClient();
+    }
+
+    @PostConstruct
+    public void init() {
+        System.out.println(">>> HttpClientConfig LOADED!");
     }
 }
