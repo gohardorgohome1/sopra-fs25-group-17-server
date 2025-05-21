@@ -12,6 +12,7 @@ import org.springframework.http.*;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Qualifier; 
 import java.util.*;
 
 @RestController
@@ -21,15 +22,22 @@ public class ChatMessageOpenAIController {
     private static final String OPENAI_API_KEY = System.getenv("OPENAI_API_KEY");
     private static final String OPENAI_API_URL = "https://api.openai.com/v1/chat/completions";
 
-    @Autowired
-    private ChatMessageOpenAIRepository chatRepo;
+    private final RestTemplate restTemplate;
+    private final ChatMessageOpenAIRepository chatRepo;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    public ChatMessageOpenAIController( ChatMessageOpenAIRepository chatRepo,
+                                        SimpMessagingTemplate messagingTemplate,
+                                        @Qualifier("sprintClientRestTemplate") RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+        this.chatRepo = chatRepo;
+        this.messagingTemplate = messagingTemplate;
+    }
 
     @PostMapping("/helper")
     public ResponseEntity<ChatResponseDTO> correctExoplanetName(@RequestBody String exoplanetName) {
-        RestTemplate restTemplate = new RestTemplate();
+
 
 
         String userPrompt = String.format(
@@ -76,7 +84,6 @@ public class ChatMessageOpenAIController {
 
     @PostMapping("/chat")
 public ResponseEntity<ChatResponseDTO> chatWithOpenAI(@RequestBody ChatRequestDTO chatRequest) {
-    RestTemplate restTemplate = new RestTemplate();
 
     for (ChatRequestDTO.Message msg : chatRequest.getMessages()) {
         ChatMessageOpenAI userMsg = new ChatMessageOpenAI();
