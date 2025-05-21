@@ -5,6 +5,8 @@ import ch.uzh.ifi.hase.soprafs24.entity.Exoplanet;
 import ch.uzh.ifi.hase.soprafs24.entity.DataPoint;
 import ch.uzh.ifi.hase.soprafs24.repository.PhotometricCurveRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.ExoplanetRepository;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,9 +35,11 @@ public class PhotometricCurveService {
 
     private final PhotometricCurveRepository photometricCurveRepository;
     private final ExoplanetRepository exoplanetRepository;
+    private final HttpClient httpClient;
 
     private static final String TAP_API_URL = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync";
-    private static final HttpClient client = HttpClient.newHttpClient();
+    // private static final HttpClient client = HttpClient.newHttpClient();
+    
     private static final float SOLAR_RADIUS_TO_EARTH = 109f;
     private static final float SURFACE_TEMP_EARTH = 288f;
 
@@ -44,10 +48,12 @@ public class PhotometricCurveService {
     private static final float ESI_VW = 0.70f;
     private static final float ESI_TW = 5.58f;
 
+    @Autowired
     public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
-                                    ExoplanetRepository exoplanetRepository) {
+                                    ExoplanetRepository exoplanetRepository, HttpClient httpClient) {
         this.photometricCurveRepository = photometricCurveRepository;
         this.exoplanetRepository = exoplanetRepository;
+        this.httpClient = httpClient;
     }
 
     public PhotometricCurve processAndSavePhotometricCurve(MultipartFile file, String hostStar, String planetName, String ownerId) throws IOException {
@@ -164,7 +170,7 @@ public class PhotometricCurveService {
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             System.out.println("[NASA TAP] Response status code: " + response.statusCode());
 

@@ -9,7 +9,6 @@ import ch.uzh.ifi.hase.soprafs24.rest.mapper.DTOMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -25,7 +24,7 @@ public class ExoplanetService {
     private final ExoplanetRepository exoplanetRepository;
 
     @Autowired
-    public ExoplanetService(@Qualifier("exoplanetRepository") ExoplanetRepository exoplanetRepository) {
+    public ExoplanetService(ExoplanetRepository exoplanetRepository) {
         this.exoplanetRepository = exoplanetRepository;
     }
 
