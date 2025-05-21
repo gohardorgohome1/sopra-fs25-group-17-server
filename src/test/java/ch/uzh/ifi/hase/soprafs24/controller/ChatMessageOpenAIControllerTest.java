@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.util.*;
 
@@ -48,6 +49,7 @@ public class ChatMessageOpenAIControllerTest {
     private SimpMessagingTemplate messagingTemplate;
 
     @MockBean
+    @Qualifier("sprintClientRestTemplate")
     private RestTemplate restTemplate;
 
     @Test

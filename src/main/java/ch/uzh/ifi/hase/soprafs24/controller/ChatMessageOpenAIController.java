@@ -12,6 +12,7 @@ import org.springframework.http.*;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Qualifier; 
 import java.util.*;
 
 @RestController
@@ -26,9 +27,9 @@ public class ChatMessageOpenAIController {
     private final SimpMessagingTemplate messagingTemplate;
 
     @Autowired
-    public ChatMessageOpenAIController(RestTemplate restTemplate,
-                                       ChatMessageOpenAIRepository chatRepo,
-                                       SimpMessagingTemplate messagingTemplate) {
+    public ChatMessageOpenAIController( ChatMessageOpenAIRepository chatRepo,
+                                        SimpMessagingTemplate messagingTemplate,
+                                        @Qualifier("sprintClientRestTemplate") RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
         this.chatRepo = chatRepo;
         this.messagingTemplate = messagingTemplate;
