@@ -7,6 +7,7 @@ import ch.uzh.ifi.hase.soprafs24.repository.PhotometricCurveRepository;
 import ch.uzh.ifi.hase.soprafs24.repository.ExoplanetRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,7 +51,7 @@ public class PhotometricCurveService {
 
     @Autowired
     public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
-                                    ExoplanetRepository exoplanetRepository, HttpClient httpClient) {
+                                    ExoplanetRepository exoplanetRepository, @Qualifier("javaNetHttpClient") HttpClient httpClient) {
         this.photometricCurveRepository = photometricCurveRepository;
         this.exoplanetRepository = exoplanetRepository;
         this.httpClient = httpClient;
