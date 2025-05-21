@@ -20,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.beans.Transient;
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -144,4 +145,12 @@ public class ChatMessageOpenAIControllerTest {
                 .andExpect(jsonPath("$.reply").value(org.hamcrest.Matchers.containsString("Error calling OpenAI")));
     }
 
+    @Test
+    void deleteGroup_correctInput_success() throws Exception {
+        mockMvc.perform(delete("/openai/chat/group/1"))
+            .andExpect(status().isOk());
+
+        verify(chatRepo).deleteByGroupId("1");
+        verify(chatGroupRepository).deleteById("1");
+    }
 }
