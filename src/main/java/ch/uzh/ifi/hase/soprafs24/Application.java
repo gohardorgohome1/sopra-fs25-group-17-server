@@ -13,8 +13,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @RestController
 @SpringBootApplication(scanBasePackages = "ch.uzh.ifi.hase.soprafs24")
-@ComponentScan(basePackages = "ch.uzh.ifi.hase.soprafs24")
-// @EnableJpaRepositories(basePackages = "ch.uzh.ifi.hase.soprafs24")
 @EnableAsync
 public class Application {
 

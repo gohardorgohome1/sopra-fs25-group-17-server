@@ -13,7 +13,7 @@ public class HttpClientConfig {
 
     @Bean
     @Primary
-    public HttpClient httpClient() {
+    public java.net.http.HttpClient httpClient() {
         return HttpClient.newHttpClient();
     }
 

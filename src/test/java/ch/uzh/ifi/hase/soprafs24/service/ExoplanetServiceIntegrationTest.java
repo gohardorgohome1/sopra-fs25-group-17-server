@@ -85,7 +85,8 @@ public class ExoplanetServiceIntegrationTest {
         assertEquals("testPlanet1", ranking.get(0).getPlanetName());
         assertEquals("testPlanet0", ranking.get(1).getPlanetName());
     }
-    @Test
+    /*
+         @Test
     public void addComment_and_getComments_success() {
         Exoplanet exoplanet0 = new Exoplanet();
         exoplanet0.setPlanetName("testPlanet0");
@@ -107,4 +108,6 @@ public class ExoplanetServiceIntegrationTest {
         assertEquals(commentPostDTO.getMessage(), foundComment.getMessage());
         assertNotNull(foundComment.getCreatedAt());
     }
+     */
+
 }

@@ -51,7 +51,7 @@ public class PhotometricCurveService {
 
     @Autowired
     public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
-                                    ExoplanetRepository exoplanetRepository, @Qualifier("javaNetHttpClient") HttpClient httpClient) {
+                                    ExoplanetRepository exoplanetRepository, HttpClient httpClient) {
         this.photometricCurveRepository = photometricCurveRepository;
         this.exoplanetRepository = exoplanetRepository;
         this.httpClient = httpClient;
