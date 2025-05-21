@@ -1,4 +1,4 @@
-/* 
+
 package ch.uzh.ifi.hase.soprafs24.controller;
 
 import ch.uzh.ifi.hase.soprafs24.entity.ChatMessageOpenAI;
@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 import java.util.*;
 
@@ -43,6 +44,12 @@ public class ChatMessageOpenAIControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @MockBean
+    private SimpMessagingTemplate messagingTemplate;
+
+    @MockBean
+    private RestTemplate restTemplate;
+
     @Test
     void testGetChatHistory_returnsSortedMessages() throws Exception {
         ChatMessageOpenAI msg1 = new ChatMessageOpenAI();
@@ -62,8 +69,8 @@ public class ChatMessageOpenAIControllerTest {
     }
     
     //@Disabled("Disabled due to missing or invalid OpenAI API key")
-    @Disabled("Disabled due to mocking or restTemplate not working")
-    @Test
+    //@Disabled("Disabled due to mocking or restTemplate not working")
+    /*@Test
     void chatWithOpenAI_returnsAssistantMessage() throws Exception {
         // Arrange test data
         ChatRequestDTO.Message message = new ChatRequestDTO.Message();
@@ -106,7 +113,7 @@ public class ChatMessageOpenAIControllerTest {
         List<ChatMessageOpenAI> savedMessages = messageCaptor.getAllValues();
         assertThat(savedMessages.get(0).getContent()).isEqualTo("Hello!");
         assertThat(savedMessages.get(1).getContent()).isEqualTo("Hi there!");
-    }
+    }*/
 
     //@Disabled("Disabled due to missing or invalid OpenAI API key")
     @Test
@@ -120,6 +127,10 @@ public class ChatMessageOpenAIControllerTest {
         chatRequest.setUserId("user1");
         chatRequest.setUsername("alex");
         chatRequest.setMessages(List.of(message));
+        chatRequest.setAiEnabled(true);
+
+        when(restTemplate.postForEntity(anyString(), any(), eq(Map.class)))
+            .thenThrow(new RuntimeException("Simulated failure"));
 
         // Simulate a server failure (OpenAI throws an exception)
         // You don't need to mock the RestTemplate here – it'll fail naturally or you can refactor into a service
@@ -129,6 +140,6 @@ public class ChatMessageOpenAIControllerTest {
                 .content(objectMapper.writeValueAsString(chatRequest)))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.reply").value(org.hamcrest.Matchers.containsString("Error calling OpenAI")));
-    } 
+    }
 
-} */
+}
