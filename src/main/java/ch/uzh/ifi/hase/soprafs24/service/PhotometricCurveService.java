@@ -35,7 +35,7 @@ public class PhotometricCurveService {
 
     private final PhotometricCurveRepository photometricCurveRepository;
     private final ExoplanetRepository exoplanetRepository;
-    private final HttpClient client;
+    private final HttpClient httpClient;
 
     private static final String TAP_API_URL = "https://exoplanetarchive.ipac.caltech.edu/TAP/sync";
     // private static final HttpClient client = HttpClient.newHttpClient();
@@ -50,10 +50,10 @@ public class PhotometricCurveService {
 
     @Autowired
     public PhotometricCurveService(PhotometricCurveRepository photometricCurveRepository,
-                                    ExoplanetRepository exoplanetRepository, HttpClient client) {
+                                    ExoplanetRepository exoplanetRepository, HttpClient httpClient) {
         this.photometricCurveRepository = photometricCurveRepository;
         this.exoplanetRepository = exoplanetRepository;
-        this.client = client;
+        this.httpClient = httpClient;
     }
 
     public PhotometricCurve processAndSavePhotometricCurve(MultipartFile file, String hostStar, String planetName, String ownerId) throws IOException {
@@ -170,7 +170,7 @@ public class PhotometricCurveService {
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();
 
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             System.out.println("[NASA TAP] Response status code: " + response.statusCode());
 
