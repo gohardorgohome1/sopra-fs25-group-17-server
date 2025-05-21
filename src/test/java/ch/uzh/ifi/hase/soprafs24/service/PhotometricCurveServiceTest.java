@@ -10,8 +10,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import java.net.http.HttpClient;
 
 import java.io.ByteArrayInputStream;
+import java.net.http.HttpClient;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,9 +28,10 @@ public class PhotometricCurveServiceTest {
 
     @BeforeEach
     public void setup() {
-        curveRepository = mock(PhotometricCurveRepository.class);
-        exoplanetRepository = mock(ExoplanetRepository.class);
-        service = new PhotometricCurveService(curveRepository, exoplanetRepository);
+    curveRepository = mock(PhotometricCurveRepository.class);
+    exoplanetRepository = mock(ExoplanetRepository.class);
+    HttpClient httpClient = mock(HttpClient.class); // Añade esto
+    service = new PhotometricCurveService(curveRepository, exoplanetRepository, httpClient);
     }
 
     @Test
